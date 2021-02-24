@@ -1,3 +1,4 @@
+import 'package:app_hamburger/src/burger_page.dart';
 import 'package:flutter/material.dart';
 
 class HamburgerList extends StatefulWidget {
@@ -38,7 +39,7 @@ class _HamburgerListState extends State<HamburgerList> {
                    width: 200,
                    child: GestureDetector(
                      onTap: (){
-                       
+                       Navigator.of(context).pushNamed(BurgerPage.tag);
                      },
                      child: Card(
                      child: Padding(
@@ -86,6 +87,7 @@ class _HamburgerListState extends State<HamburgerList> {
                    top: reverse ? 50 : 50,
                    child: GestureDetector(
                      onTap: (){
+                       Navigator.of(context).pushNamed(BurgerPage.tag);
 
                      },
                      child: reverse ? burgerImage : burgerImage,

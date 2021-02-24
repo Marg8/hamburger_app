@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "330054738628",
+    "project_id": "chiken-mac",
+    "storage_bucket": "chiken-mac.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:330054738628:android:096f9dc6ca8b85763b5f91",
+        "android_client_info": {
+          "package_name": "com.example.app_hamburger"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "330054738628-dq0fajejd437vudit46rme12ejlcsirp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0m5aQnCE0k29UkF4dNYGexvwFOt0YI_Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "330054738628-dq0fajejd437vudit46rme12ejlcsirp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
