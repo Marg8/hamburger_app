@@ -2,6 +2,8 @@ import 'package:app_hamburger/src/categories.dart';
 import 'package:app_hamburger/src/hamburgers_list.dart';
 import 'package:app_hamburger/src/header.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MyApp());
