@@ -1,4 +1,5 @@
 
+import 'package:app_hamburger/Admin/adminLogin.dart';
 import 'package:app_hamburger/DialogBox/errorDialog.dart';
 import 'package:app_hamburger/Config/config.dart';
 import 'package:app_hamburger/DialogBox/loadingDialog.dart';
@@ -8,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 
 
 
@@ -83,7 +85,7 @@ class _LoginState extends State<Login>
                 }
                 );
               },
-              color: Colors.black,
+              color: Colors.orange,
               child: Text("Login", style: TextStyle(color: Colors.white),),
             ),
             SizedBox(
@@ -92,19 +94,19 @@ class _LoginState extends State<Login>
             Container(
               height: 4.0,
               width: _screenWidth * 0.8,
-              color: Colors.black,
+              color: Colors.orange,
             ),
             SizedBox(
               height: 10.0,
             ),
-            // FlatButton.icon(
-            //   onPressed: () =>
-            //       Navigator.push(context, MaterialPageRoute(
-            //           builder: (context) => AdminSignInPage())),
-            //   icon: (Icon(Icons.nature_people, color: Colors.white,)),
-            //   label: Text("i'm admin", style: TextStyle(
-            //       color: Colors.white, fontWeight: FontWeight.bold),),
-            // )
+            FlatButton.icon(
+              onPressed: () =>
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => AdminSignInPage())),
+              icon: (Icon(Icons.nature_people, color: Colors.white,)),
+              label: Text("i'm admin", style: TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold),),
+            )
           ],
         ),
       ),

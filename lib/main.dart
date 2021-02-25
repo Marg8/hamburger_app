@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:app_hamburger/Authentication/authenication.dart';
 import 'package:app_hamburger/Config/config.dart';
+import 'package:app_hamburger/Widgets/myDrawer.dart';
 import 'package:app_hamburger/src/burger_page.dart';
 import 'package:app_hamburger/src/categories.dart';
 import 'package:app_hamburger/src/hamburgers_list.dart';
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
         bottomAppBarColor: Colors.teal,
         floatingActionButtonTheme: FloatingActionButtonThemeData(backgroundColor: Colors.orange)  
       ),
-      home:  AuthenticScreen(),
+      home:  SplashScreen(),
       // routes: {BurgerPage.tag: (_)=>BurgerPage()},
       debugShowCheckedModeBanner: false,
               );
@@ -63,10 +64,13 @@ class _HamburgerState extends State<Hamburger> {
           SliverAppBar(
             pinned: true,
             title: Text("Chiken-Mac",style: TextStyle(fontSize: 30),),
-            leading: IconButton(icon:Icon(Icons.menu), onPressed: (){}),
+            // leading: IconButton(icon:Icon(Icons.menu), onPressed: (){
+            
+            // }),
             actions: [IconButton(icon: Icon(Icons.shopping_bag), onPressed: (){})],
             
           ),
+         
           Header(),
           Categories(),
           HamburgerList(row: 1,),
@@ -103,6 +107,7 @@ class _HamburgerState extends State<Hamburger> {
           ),
         ),
       ),
+      drawer:  MyDrawer(),
     );
   }
 }
@@ -156,7 +161,10 @@ class _SplashScreenState extends State<SplashScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Image.asset("images/hamburger3"),
+              Image.asset("images/chikenmaclogo.png",
+              height: 200.0,
+              width: 240.0,
+                ),
               SizedBox(height: 20.0,),
               Text("Chiken-Mac",
               style: TextStyle(color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.bold),

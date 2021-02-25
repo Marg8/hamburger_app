@@ -48,7 +48,7 @@ class _AuthenticScreenState extends State<AuthenticScreen> {
               ),
 
             ],
-            indicatorColor: Colors.black,
+            indicatorColor: Colors.orangeAccent,
             indicatorWeight: 5.0,
           ),
         ),
