@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:app_hamburger/Authentication/authenication.dart';
 import 'package:app_hamburger/Config/config.dart';
+import 'package:app_hamburger/Models/item.dart';
+import 'package:app_hamburger/Widgets/loadingWidget.dart';
 import 'package:app_hamburger/Widgets/myDrawer.dart';
+import 'package:app_hamburger/Widgets/searchBox.dart';
 import 'package:app_hamburger/src/burger_page.dart';
 import 'package:app_hamburger/src/categories.dart';
 import 'package:app_hamburger/src/hamburgers_list.dart';
@@ -10,6 +13,7 @@ import 'package:app_hamburger/src/header.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -34,7 +38,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        cardColor: Colors.teal,
+        cardColor:  Colors.teal,
         appBarTheme: AppBarTheme(color: Colors.teal,centerTitle: true),
         bottomAppBarColor: Colors.teal,
         floatingActionButtonTheme: FloatingActionButtonThemeData(backgroundColor: Colors.orange)  
@@ -73,8 +77,39 @@ class _HamburgerState extends State<Hamburger> {
          
           Header(),
           Categories(),
-          HamburgerList(row: 1,),
-          HamburgerList(row: 2,),
+            StreamBuilder<QuerySnapshot>(
+                stream: Firestore.instance
+                    .collection("items")
+                    .limit(100)
+                    .orderBy("publishedDate", descending: true)
+                    .snapshots(),
+                builder: (context, dataSnapshot) {
+                  return !dataSnapshot.hasData
+                      ? SliverToBoxAdapter(
+                          child: Center(
+                            child: circularProgress(),
+                          ),
+                        )
+                      : SliverToBoxAdapter(
+                        child: Container(
+                         height: 240,
+                         margin: EdgeInsets.only(top: 10),
+                         child: ListView.builder(
+                         scrollDirection: Axis.horizontal,
+           
+                        itemBuilder: (context, index){
+                         
+                            ItemModel model = ItemModel.fromJson(
+                            dataSnapshot.data.documents[index].data);
+                            return sourceInfoBurger(model, context);
+                          },
+                          itemCount: dataSnapshot.data.documents.length,
+                         )
+                        )
+                        );
+                }),
+          
+          // HamburgerList(row: 2,),
           
 
         ],

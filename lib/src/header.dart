@@ -1,3 +1,4 @@
+import 'package:app_hamburger/Store/Search.dart';
 import 'package:flutter/material.dart';
 
 class Header extends StatefulWidget {
@@ -88,6 +89,10 @@ class _HeaderState extends State<Header> {
                       margin: EdgeInsets.symmetric(horizontal: 50),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                       child: TextFormField(
+                        onTap: (){
+                          Route route = MaterialPageRoute(builder: (c) => SearchProduct());
+                           Navigator.push(context, route);
+                        },
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           labelText: "Buesqueda avanzada",
