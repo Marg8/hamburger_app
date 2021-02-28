@@ -15,7 +15,6 @@ import 'cart.dart';
 
 double width;
 
-
 class StoreHome extends StatefulWidget {
   @override
   _StoreHomeState createState() => _StoreHomeState();
@@ -38,26 +37,25 @@ class _StoreHomeState extends State<StoreHome> {
           flexibleSpace: Container(
             decoration: new BoxDecoration(
               gradient: new LinearGradient(
-                colors: [Color(theme),Color(theme)],
+                colors: [Color(theme), Color(theme)],
                 begin: const FractionalOffset(0.0, 0.0),
                 end: const FractionalOffset(1.0, 0.0),
                 stops: [0.0, 1.0],
                 tileMode: TileMode.clamp,
               ),
             ),
-            child: Image.asset("images/dmwhite.png",
+            child: Image.asset(
+              "images/dmwhite.png",
               height: 240.0,
               width: 240.0,
             ),
           ),
-
           title: Text(
             "",
             style: TextStyle(
                 fontSize: 55.0, color: Colors.black, fontFamily: "Signatra"),
           ),
           centerTitle: true,
-
           actions: [
             Stack(
               children: [
@@ -89,7 +87,12 @@ class _StoreHomeState extends State<StoreHome> {
                         child: Consumer<CartItemCounter>(
                           builder: (context, counter, _) {
                             return Text(
-                             (EcommerceApp.sharedPreferences.getStringList(EcommerceApp.userCartList).length - 1).toString(),
+                              (EcommerceApp.sharedPreferences
+                                          .getStringList(
+                                              EcommerceApp.userCartList)
+                                          .length -
+                                      1)
+                                  .toString(),
                               style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 12.0,
@@ -106,8 +109,8 @@ class _StoreHomeState extends State<StoreHome> {
           ],
         ),
         drawer: MyDrawer(),
-        body: CustomScrollView(          
-          slivers: [            
+        body: CustomScrollView(
+          slivers: [
             SliverPersistentHeader(pinned: true, delegate: SearchBoxDelegate()),
             StreamBuilder<QuerySnapshot>(
                 stream: Firestore.instance
@@ -133,9 +136,7 @@ class _StoreHomeState extends State<StoreHome> {
                           itemCount: dataSnapshot.data.documents.length,
                         );
                 }),
-                
           ],
-          
         ),
       ),
     );
@@ -153,66 +154,66 @@ Widget sourceInfo(ItemModel model, BuildContext context,
     splashColor: Colors.black,
     child: Padding(
       padding: EdgeInsets.all(6.0),
-      child: removeCartFunction == null ? Table(
-        children: [
-          TableRow(
-            children: [
-              Container(
-            height: 280.0,
-            width: 50,
-            decoration: BoxDecoration(
-              boxShadow:[
-              new BoxShadow(
-              color: Colors.black,
-              offset: new Offset(0.0, 5.0),
-              blurRadius: 5.0,
-        ),
-         ],
-              borderRadius: BorderRadius.circular(15),
-              gradient: new LinearGradient(
-              colors: [Colors.white,Colors.white],
-              ),
-            ),
-            child: Column(
+      child: removeCartFunction == null
+          ? Table(
               children: [
-                FadeInImage(
-                  image: NetworkImage(model.thumbnailUrl),
-                  placeholder: AssetImage("images/jar-loading1.gif"),
-                  fadeInDuration: Duration(milliseconds: 50),
-                  width: 140.0,
-                  height: 140.0,
-                  ),
-                  
-                
-                SizedBox(
-                  width: 1.0,
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(left: 10),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                model.title ?? '',
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 18.0, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ],
+                TableRow(children: [
+                  Container(
+                    height: 280.0,
+                    width: 50,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        new BoxShadow(
+                          color: Colors.black,
+                          offset: new Offset(0.0, 5.0),
+                          blurRadius: 5.0,
                         ),
+                      ],
+                      borderRadius: BorderRadius.circular(15),
+                      gradient: new LinearGradient(
+                        colors: [Colors.white, Colors.white],
                       ),
-                      SizedBox(
-                        height: 5.0,
-                      ),
-                      /*Container(
+                    ),
+                    child: Column(
+                      children: [
+                        FadeInImage(
+                          image: NetworkImage(model.thumbnailUrl),
+                          placeholder: AssetImage("images/jar-loading1.gif"),
+                          fadeInDuration: Duration(milliseconds: 50),
+                          width: 140.0,
+                          height: 140.0,
+                        ),
+                        SizedBox(
+                          width: 1.0,
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 15.0,
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 10),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        model.title ?? '',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5.0,
+                              ),
+                              /*Container(
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
@@ -229,9 +230,9 @@ Widget sourceInfo(ItemModel model, BuildContext context,
                       SizedBox(
                         height: 15.0,
                       ),*/
-                      Row(
-                        children: [
-                          /*Container(
+                              Row(
+                                children: [
+                                  /*Container(
                             decoration: BoxDecoration(
                               shape: BoxShape.rectangle,
                               color: Colors.red,
@@ -261,64 +262,72 @@ Widget sourceInfo(ItemModel model, BuildContext context,
                               ),
                             ),
                           ),*/
-                          SizedBox(
-                            width: 10.0,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(left: 1.0),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      r"",
-                                      style: TextStyle(
-                                          fontSize: 18.0, color: Colors.black),
-                                    ),
-                                    Text(
-                                      r"$",
-                                      style: TextStyle(
-                                          color: Colors.black, fontSize: 18.0,fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      (model.price ?? '').toString(),
-                                      style: TextStyle(
-                                        fontSize: 18.0,
-                                        color: Colors.black,fontWeight: FontWeight.bold,
+                                  SizedBox(
+                                    width: 10.0,
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 1.0),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              r"",
+                                              style: TextStyle(
+                                                  fontSize: 18.0,
+                                                  color: Colors.black),
+                                            ),
+                                            Text(
+                                              r"$",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 18.0,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Text(
+                                              (model.price ?? '').toString(),
+                                              style: TextStyle(
+                                                fontSize: 18.0,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 30.0),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      r"$",
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 30.0),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              r"$",
+                                              style: TextStyle(
+                                                fontSize: 18.0,
+                                                color: Colors.red,
+                                                decoration:
+                                                    TextDecoration.lineThrough,
+                                              ),
+                                            ),
+                                            Text(
+                                              (model.price +
+                                                          model.price * 0.30 ??
+                                                      '')
+                                                  .toString()
+                                                  .replaceAll(".0", ""),
+                                              style: TextStyle(
+                                                fontSize: 18.0,
+                                                color: Colors.red,
+                                                decoration:
+                                                    TextDecoration.lineThrough,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
 
-
-                                      style: TextStyle(
-                                        fontSize: 18.0,
-                                        color: Colors.red,
-                                        decoration: TextDecoration.lineThrough,
-                                      ),
-                                    ),
-                                    Text(
-                                      (model.price + model.price*0.30 ?? '')
-                                          .toString().replaceAll(".0", ""),
-                                      style: TextStyle(
-                                        fontSize: 18.0,
-                                        color: Colors.red,
-                                        decoration: TextDecoration.lineThrough,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              
-                              /*Padding(
+                                      /*Padding(
                                 padding: EdgeInsets.only(top: 1.0),
                                 child: Row(
                                   children: [
@@ -342,219 +351,228 @@ Widget sourceInfo(ItemModel model, BuildContext context,
                                   ],
                                 ),
                               ),*/
-                            ],
-                          )
-                        ],
-                      ),
-                      Flexible(
-                        child: Container(),
-                      ),
-                      //to implement the cart item remove feature
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: removeCartFunction == null
-                            ? IconButton(
-                                icon: Icon(
-                                  Icons.add_shopping_cart,
-                                  color: Colors.black,
-                                ),
-                                onPressed: () {
-                                  checkItemInCart(model.title, context);
-                                },
-                              )
-                            : IconButton(
-                                icon: Icon(Icons.delete, color: Colors.black,),
-                          onPressed: ()
-                          {
-                            removeCartFunction();
-
-                            //opcional para salir automatico
-
-                            Route route = MaterialPageRoute(builder: (c) => StoreHome());
-                            Navigator.push(context, route);
-
-                          },
-                              ),
-                      ),
-                      
-                    ],
-                  ),
-                )
-              ],
-            ),
-        ),
-              
-            ]
-          )
-
-        ],
-         // Aqui se modifica la informacion del Carro unicamente
-         //Cart Page
-
-      ) : Table(
-        children: [
-          TableRow(
-            children: [
-              Container(
-            height: 180.0,
-            width: 50,
-            decoration: BoxDecoration(
-              boxShadow:[
-              new BoxShadow(
-              color: Colors.black,
-              offset: new Offset(0.0, 5.0),
-              blurRadius: 5.0,
-        ),
-         ],
-              borderRadius: BorderRadius.circular(15),
-              gradient: new LinearGradient(
-              colors: [Colors.white,Colors.white],
-              ),
-            ),
-            child: Row(
-              children: [
-                Image.network(
-                  model.thumbnailUrl,
-                  width: 140.0,
-                  height: 140.0,
-                ),
-                SizedBox(
-                  width: 1.0,
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(left: 10),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                model.title ?? '',
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 18.0, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 5.0,
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(left: 10),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                model.shortInfo ?? '',
-                                style: TextStyle(
-                                    color: Colors.black54, fontSize: 12.0),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                      Row(
-                        children: [
-                          Container(
-                            margin: EdgeInsets.only(left: 10),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.rectangle,
-                              color: Colors.red,
-                            ),
-                            alignment: Alignment.topLeft,
-                            width: 40.0,
-                            height: 43.0,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "30%",
-                                    style: TextStyle(
-                                        fontSize: 15.0,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.normal),
-                                  ),
-                                  Text(
-                                    "OFF%",
-                                    style: TextStyle(
-                                        fontSize: 12.0,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.normal),
-                                  ),
+                                    ],
+                                  )
                                 ],
                               ),
-                            ),
+                              Flexible(
+                                child: Container(),
+                              ),
+                              //to implement the cart item remove feature
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: removeCartFunction == null
+                                    ? IconButton(
+                                        icon: Icon(
+                                          Icons.add_shopping_cart,
+                                          color: Colors.black,
+                                        ),
+                                        onPressed: () {
+                                          checkItemInCart(model.title, context);
+                                        },
+                                      )
+                                    : IconButton(
+                                        icon: Icon(
+                                          Icons.delete,
+                                          color: Colors.black,
+                                        ),
+                                        onPressed: () {
+                                          removeCartFunction();
+
+                                          //opcional para salir automatico
+
+                                          Route route = MaterialPageRoute(
+                                              builder: (c) => StoreHome());
+                                          Navigator.push(context, route);
+                                        },
+                                      ),
+                              ),
+                            ],
                           ),
-                          SizedBox(
-                            width: 10.0,
-                          ),
-                          Row(
+                        )
+                      ],
+                    ),
+                  ),
+                ])
+              ],
+              // Aqui se modifica la informacion del Carro unicamente
+              //Cart Page
+            )
+          : Table(
+              children: [
+                TableRow(children: [
+                  Container(
+                    height: 180.0,
+                    width: 50,
+                    decoration: BoxDecoration(
+                      boxShadow: [
+                        new BoxShadow(
+                          color: Colors.black,
+                          offset: new Offset(0.0, 5.0),
+                          blurRadius: 5.0,
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(15),
+                      gradient: new LinearGradient(
+                        colors: [Colors.white, Colors.white],
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Image.network(
+                          model.thumbnailUrl,
+                          width: 140.0,
+                          height: 140.0,
+                        ),
+                        SizedBox(
+                          width: 1.0,
+                        ),
+                        Expanded(
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Padding(
-                                padding: EdgeInsets.only(left: 1.0),
+                              SizedBox(
+                                height: 15.0,
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 10),
                                 child: Row(
+                                  mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    Text(
-                                      r"",
-                                      style: TextStyle(
-                                          fontSize: 18.0, color: Colors.black),
-                                    ),
-                                    Text(
-                                      r"$",
-                                      style: TextStyle(
-                                          color: Colors.black, fontSize: 18.0,fontWeight: FontWeight.bold),
-                                    ),
-                                    Text(
-                                      (model.price ?? '').toString(),
-                                      style: TextStyle(
-                                        fontSize: 18.0,
-                                        color: Colors.black,fontWeight: FontWeight.bold,
+                                    Expanded(
+                                      child: Text(
+                                        model.title ?? '',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 30.0),
+                              SizedBox(
+                                height: 5.0,
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 10),
                                 child: Row(
+                                  mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    Text(
-                                      r"$",
-
-
-                                      style: TextStyle(
-                                        fontSize: 18.0,
-                                        color: Colors.red,
-                                        decoration: TextDecoration.lineThrough,
-                                      ),
-                                    ),
-                                    Text(
-                                      (model.price + model.price*0.30 ?? '')
-                                          .toString().replaceAll(".0", ""),
-                                      style: TextStyle(
-                                        fontSize: 18.0,
-                                        color: Colors.red,
-                                        decoration: TextDecoration.lineThrough,
+                                    Expanded(
+                                      child: Text(
+                                        model.shortInfo ?? '',
+                                        style: TextStyle(
+                                            color: Colors.black54,
+                                            fontSize: 12.0),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                              
-                              /*Padding(
+                              SizedBox(
+                                height: 15.0,
+                              ),
+                              Row(
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.only(left: 10),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.rectangle,
+                                      color: Colors.red,
+                                    ),
+                                    alignment: Alignment.topLeft,
+                                    width: 40.0,
+                                    height: 43.0,
+                                    child: Center(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "30%",
+                                            style: TextStyle(
+                                                fontSize: 15.0,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.normal),
+                                          ),
+                                          Text(
+                                            "OFF%",
+                                            style: TextStyle(
+                                                fontSize: 12.0,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.normal),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 10.0,
+                                  ),
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 1.0),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              r"",
+                                              style: TextStyle(
+                                                  fontSize: 18.0,
+                                                  color: Colors.black),
+                                            ),
+                                            Text(
+                                              r"$",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 18.0,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            Text(
+                                              (model.price ?? '').toString(),
+                                              style: TextStyle(
+                                                fontSize: 18.0,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 30.0),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              r"$",
+                                              style: TextStyle(
+                                                fontSize: 18.0,
+                                                color: Colors.red,
+                                                decoration:
+                                                    TextDecoration.lineThrough,
+                                              ),
+                                            ),
+                                            Text(
+                                              (model.price +
+                                                          model.price * 0.30 ??
+                                                      '')
+                                                  .toString()
+                                                  .replaceAll(".0", ""),
+                                              style: TextStyle(
+                                                fontSize: 18.0,
+                                                color: Colors.red,
+                                                decoration:
+                                                    TextDecoration.lineThrough,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+
+                                      /*Padding(
                                 padding: EdgeInsets.only(top: 1.0),
                                 child: Row(
                                   children: [
@@ -578,54 +596,51 @@ Widget sourceInfo(ItemModel model, BuildContext context,
                                   ],
                                 ),
                               ),*/
-                            ],
-                          )
-                        ],
-                      ),
-                      Flexible(
-                        child: Container(),
-                      ),
-                      //to implement the cart item remove feature
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: removeCartFunction == null
-                            ? IconButton(
-                                icon: Icon(
-                                  Icons.add_shopping_cart,
-                                  color: Colors.black,
-                                ),
-                                onPressed: () {
-                                  checkItemInCart(model.title, context);
-                                },
-                              )
-                            : IconButton(
-                                icon: Icon(Icons.delete, color: Colors.black,),
-                          onPressed: ()
-                          {
-                            removeCartFunction();
-
-                            //opcional para salir automatico
-
-                            Route route = MaterialPageRoute(builder: (c) => StoreHome());
-                            Navigator.push(context, route);
-
-                          },
+                                    ],
+                                  )
+                                ],
                               ),
-                      ),
-                      
-                    ],
+                              Flexible(
+                                child: Container(),
+                              ),
+                              //to implement the cart item remove feature
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: removeCartFunction == null
+                                    ? IconButton(
+                                        icon: Icon(
+                                          Icons.add_shopping_cart,
+                                          color: Colors.black,
+                                        ),
+                                        onPressed: () {
+                                          checkItemInCart(model.title, context);
+                                        },
+                                      )
+                                    : IconButton(
+                                        icon: Icon(
+                                          Icons.delete,
+                                          color: Colors.black,
+                                        ),
+                                        onPressed: () {
+                                          removeCartFunction();
+
+                                          //opcional para salir automatico
+
+                                          Route route = MaterialPageRoute(
+                                              builder: (c) => StoreHome());
+                                          Navigator.push(context, route);
+                                        },
+                                      ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                )
+                ])
               ],
             ),
-        ),
-              
-            ]
-          )
-
-        ],
-         
-      ),
     ),
   );
 }
@@ -636,12 +651,12 @@ Widget card({Color primaryColor = Colors.redAccent, String imgPath}) {
     width: width * .34,
     margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
     decoration: BoxDecoration(
-      color: primaryColor,
-      borderRadius: BorderRadius.all(Radius.circular(20.0)),
-      boxShadow: <BoxShadow>[
-        BoxShadow(offset: Offset(0, 5), blurRadius: 10.0, color: Colors.grey[200]),
-      ]
-    ),
+        color: primaryColor,
+        borderRadius: BorderRadius.all(Radius.circular(20.0)),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+              offset: Offset(0, 5), blurRadius: 10.0, color: Colors.grey[200]),
+        ]),
     child: Image.network(
       imgPath,
       height: 150.0,

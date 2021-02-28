@@ -3,7 +3,6 @@ import 'package:app_hamburger/Config/config.dart';
 import 'package:app_hamburger/Counters/cartitemcounter.dart';
 import 'package:app_hamburger/Counters/totalMoney.dart';
 import 'package:app_hamburger/Models/item.dart';
-import 'package:app_hamburger/Store/storehome.dart';
 import 'package:app_hamburger/Widgets/customAppBar.dart';
 import 'package:app_hamburger/Widgets/loadingWidget.dart';
 import 'package:app_hamburger/Widgets/myDrawer.dart';
@@ -11,7 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:app_hamburger/src/hamburgers_list.dart';
 import 'package:provider/provider.dart';
 
 
@@ -101,14 +100,11 @@ class _CartPageState extends State<CartPage> {
                                 }
 
                                 if (snapshot.data.documents.length - 1 == index) {
-                                  WidgetsBinding.instance
-                                      .addPostFrameCallback((c) {
-                                    Provider.of<TotalAmount>(context,
-                                            listen: false)
-                                        .display(totalAmount);
+                                  WidgetsBinding.instance.addPostFrameCallback((c) {
+                                    Provider.of<TotalAmount>(context,listen: false).display(totalAmount);
                                   });
                                 }
-                                return sourceInfo(model, context,
+                                return sourceInfoBurger(model, context,
                                     removeCartFunction: () =>
                                         removeItemFromUserCart(
                                             model.title));

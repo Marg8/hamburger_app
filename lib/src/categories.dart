@@ -2,20 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class Categories extends StatefulWidget {
-  
-
   @override
   _CategoriesState createState() => _CategoriesState();
 }
 
 class _CategoriesState extends State<Categories> {
-
   int currentSelectedItem = 0;
 
   @override
   Widget build(BuildContext context) {
-
-    int  items = 10;
+    int items = 10;
 
     return SliverToBoxAdapter(
       child: Container(
@@ -24,30 +20,35 @@ class _CategoriesState extends State<Categories> {
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: items,
-          itemBuilder: (context, index)=> Stack(
+          itemBuilder: (context, index) => Stack(
             children: [
               Column(
                 children: [
                   Container(
                     height: 90,
                     width: 90,
-                    margin: EdgeInsets.only(left: index == 0 ? 20 : 0, right: 20),
+                    margin:
+                        EdgeInsets.only(left: index == 0 ? 20 : 0, right: 20),
                     child: GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         setState(() {
                           currentSelectedItem = index;
                         });
                       },
                       child: Card(
-                        color: index == currentSelectedItem ? Colors.black.withOpacity(0.7) : Colors.white,
-                        child: Icon(Icons.fastfood,
-                        color: index == currentSelectedItem ? Colors.white : Colors.black.withOpacity(0.7),
+                        color: index == currentSelectedItem
+                            ? Colors.black.withOpacity(0.7)
+                            : Colors.white,
+                        child: Icon(
+                          Icons.fastfood,
+                          color: index == currentSelectedItem
+                              ? Colors.white
+                              : Colors.black.withOpacity(0.7),
                         ),
                         elevation: 3,
                         margin: EdgeInsets.all(10),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25)
-                        ),
+                            borderRadius: BorderRadius.circular(25)),
                       ),
                     ),
                   )
@@ -56,9 +57,7 @@ class _CategoriesState extends State<Categories> {
               Positioned(
                 bottom: 0,
                 child: Container(
-                  margin: EdgeInsets.only(
-                    left: index == 0 ? 20 : 0, right: 20
-                  ),
+                  margin: EdgeInsets.only(left: index == 0 ? 20 : 0, right: 20),
                   width: 90,
                   child: Row(
                     children: [
@@ -71,9 +70,8 @@ class _CategoriesState extends State<Categories> {
               )
             ],
           ),
-          ),
+        ),
       ),
-       
     );
   }
 }
