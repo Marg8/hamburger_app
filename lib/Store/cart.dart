@@ -102,10 +102,10 @@ class _CartPageState extends State<CartPage> {
                               if (index == 0) {
                                 totalAmount = 0;
                                 totalAmount =
-                                    model.price * model.qtyitems + totalAmount;
+                                    model.price + totalAmount;
                               } else {
                                 totalAmount =
-                                    model.price * model.qtyitems + totalAmount;
+                                    model.price + totalAmount;
                               }
 
                               if (snapshot.data.documents.length - 1 == index) {

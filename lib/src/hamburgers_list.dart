@@ -69,7 +69,7 @@ Widget sourceInfoBurger(ItemModel model, BuildContext context,
                                       ),
                                       onPressed: () {
                                         checkItemInCart(model.title, context);
-                                        saveItemInfoUserCart(model, context);
+                                        checkProductIdinCart(model.title,model,context);
                                       },
                                     )
                                   : IconButton(
@@ -157,8 +157,7 @@ Widget sourceInfoBurger(ItemModel model, BuildContext context,
                               ),
                               Expanded(
                                 child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     SizedBox(
                                       height: 15.0,
@@ -174,8 +173,7 @@ Widget sourceInfoBurger(ItemModel model, BuildContext context,
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 18.0,
-                                                  fontWeight:
-                                                      FontWeight.bold),
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                         ],
@@ -272,8 +270,7 @@ Widget sourceInfoBurger(ItemModel model, BuildContext context,
                                                   onPressed: () {
                                                     checkItemInCart(
                                                         model.title, context);
-                                                    saveItemInfoUserCart(
-                                                        model, context);
+                                                        checkProductIdinCart(model.title,model,context);
                                                   },
                                                 )
                                               : IconButton(
@@ -362,7 +359,15 @@ addItemToCart(String titleAsID, BuildContext context) {
   });
 }
 
-saveItemInfoUserCart(ItemModel model, BuildContext context) {
+checkProductIdinCart(String tittleAsId, ItemModel model, BuildContext context) {
+  EcommerceApp.sharedPreferences
+          .getStringList(EcommerceApp.userCartList)
+              .contains(tittleAsId.toString())
+      ? Fluttertoast.showToast(msg: "Articulo ya existe.")
+      : saveItemInfoUserCart(tittleAsId, model, context);
+}
+
+saveItemInfoUserCart(String tittleAsId, ItemModel model, BuildContext context) {
   String productId = DateTime.now().millisecondsSinceEpoch.toString();
 
   EcommerceApp.firestore
@@ -468,14 +473,32 @@ class _CantidadProductoState extends State<CantidadProducto> {
   }
 
   _addProd() {
-    return setState(() {
-      widget.model.qtyitems++;
+    widget.model.qtyitems++;
+
+    EcommerceApp.firestore
+        .collection(EcommerceApp.collectionUser)
+        .document(
+            EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .collection(EcommerceApp.userCartList)
+        .document(widget.model.productId.toString())
+        .updateData({
+      "Price": widget.model.price.toInt(),
+      "qtyitems": widget.model.qtyitems.toInt(),
     });
   }
 
   _removeProd() {
-    return setState(() {
-      widget.model.qtyitems--;
+    widget.model.qtyitems--;
+
+    EcommerceApp.firestore
+        .collection(EcommerceApp.collectionUser)
+        .document(
+            EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .collection(EcommerceApp.userCartList)
+        .document(widget.model.productId.toString())
+        .updateData({
+      "price": widget.model.price.toInt(),
+      "qtyitems": widget.model.qtyitems.toInt(),
     });
   }
 }

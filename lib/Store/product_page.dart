@@ -202,8 +202,11 @@ class MultipleOptions extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                   child: InkWell(
-                      onTap: () =>
-                          checkItemInCart1(widget.itemModel.title, context),
+                      onTap: () {
+                        checkItemInCart1(widget.itemModel.title, context);
+
+                        checkProductIdinCart(widget.itemModel.title, widget.itemModel,context);
+                      },
                       child: AddToCartBottom()),
                 ),
                 SizedBox(width: 10),
@@ -220,15 +223,11 @@ class MultipleOptions extends StatelessWidget {
   }
 
   void checkItemInCart1(String titleAsID, BuildContext context) {
-    if(EcommerceApp.sharedPreferences
+    EcommerceApp.sharedPreferences
             .getStringList(EcommerceApp.userCartList)
-            .contains(titleAsID.toString()) = true){
-              Fluttertoast.showToast(msg: "Articulo ya existe en Carrito.")
-            }else{
-              addItemToCart(titleAsID, context);
-        saveItemInfoUserCart(context);
-            }
-        
+            .contains(titleAsID.toString())
+        ? Fluttertoast.showToast(msg: "Articulo ya existe en Carrito.")
+        : addItemToCart(titleAsID, context);
   }
 
   addItemToCart(String titleAsID, BuildContext context) {
@@ -250,28 +249,40 @@ class MultipleOptions extends StatelessWidget {
 
       Provider.of<CartItemCounter>(context, listen: false).displayResult();
     });
-    
   }
-  saveItemInfoUserCart(BuildContext context) {
-      String productId = DateTime.now().millisecondsSinceEpoch.toString();
 
-      EcommerceApp.firestore
-          .collection(EcommerceApp.collectionUser)
-          .document(
-              EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-              .collection(EcommerceApp.userCartList).document(productId)
-          .setData({
-        "shortInfo": widget.itemModel.shortInfo.toString(),
-        "longDescription": widget.itemModel.longDescription.toString(),
-        "price": widget.itemModel.price.toInt(),
-        "publishedDate": DateTime.now(),
-        "status": "available",
-        "thumbnailUrl": widget.itemModel.thumbnailUrl,
-        "title": widget.itemModel.title.toString(),
-        "qtyitems": widget.itemModel.qtyitems.toInt(),
-        "productId": productId
-      });
-    }
+  checkProductIdinCart(
+      String tittleAsId, ItemModel itemModel, BuildContext context) {
+    EcommerceApp.sharedPreferences
+            .getStringList(EcommerceApp.userCartList)
+            .contains(tittleAsId.toString())
+        ? Fluttertoast.showToast(msg: "Articulo ya existe.")
+        : saveItemInfoUserCart(tittleAsId, itemModel, context);
+  }
+
+  saveItemInfoUserCart(
+      String tittleAsId, ItemModel itemModel, BuildContext context) {
+    String productId = DateTime.now().millisecondsSinceEpoch.toString();
+
+    EcommerceApp.firestore
+        .collection(EcommerceApp.collectionUser)
+        .document(
+            EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .collection(EcommerceApp.userCartList)
+        .document(productId)
+        .setData({
+      "shortInfo": widget.itemModel.shortInfo.toString(),
+      "longDescription": widget.itemModel.longDescription.toString(),
+      "price": widget.itemModel.price.toInt(),
+      // "cartPrice": widget.itemModel.price.toInt(),
+      "publishedDate": DateTime.now(),
+      "status": "available",
+      "thumbnailUrl": widget.itemModel.thumbnailUrl,
+      "title": widget.itemModel.title.toString(),
+      "qtyitems": widget.itemModel.qtyitems.toInt(),
+      "productId": productId
+    });
+  }
 }
 
 class AddToCartBottom extends StatelessWidget {
