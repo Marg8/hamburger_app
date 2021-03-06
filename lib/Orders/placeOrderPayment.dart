@@ -1,5 +1,6 @@
 import 'package:app_hamburger/Counters/cartitemcounter.dart';
 import 'package:app_hamburger/Store/storehome.dart';
+import 'package:app_hamburger/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -98,7 +99,7 @@ class _PaymentPageState extends State<PaymentPage> {
     });
     Fluttertoast.showToast(msg: "Felizidades, Tu Ordern ha sido Recibida.");
 
-    Route route = MaterialPageRoute(builder: (c)=>StoreHome());
+    Route route = MaterialPageRoute(builder: (c)=>Hamburger());
     Navigator.push(context, route);
   }
 

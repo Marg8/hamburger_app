@@ -135,7 +135,7 @@ class StatusBanner extends StatelessWidget
     return Container(
       decoration: new BoxDecoration(
         gradient: new LinearGradient(
-          colors: [Color(theme),Color(theme)],
+          colors: [Colors.teal,Colors.teal],
           begin: const FractionalOffset(0.0, 0.0),
           end: const FractionalOffset(1.0,0.0),
           stops: [0.0,1.0],
@@ -269,7 +269,7 @@ class ShippingDetails extends StatelessWidget
               child: Container(
                 decoration: new BoxDecoration(
                   gradient: new LinearGradient(
-                    colors: [Color(theme),Color(theme)],
+                    colors: [Colors.teal,Colors.teal],
                     begin: const FractionalOffset(0.0, 0.0),
                     end: const FractionalOffset(1.0,0.0),
                     stops: [0.0,1.0],

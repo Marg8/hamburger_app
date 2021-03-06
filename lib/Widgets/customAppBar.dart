@@ -1,6 +1,7 @@
 import 'package:app_hamburger/Authentication/authenication.dart';
 import 'package:app_hamburger/Config/config.dart';
 import 'package:app_hamburger/Counters/cartitemcounter.dart';
+import 'package:app_hamburger/Store/cart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -37,12 +38,13 @@ class MyAppBar extends StatelessWidget with PreferredSizeWidget {
           children: [
             IconButton(
               icon: Icon(
-                Icons.shopping_cart,
+                Icons.shopping_bag,
                 color: Colors.white,
               ),
               onPressed: () {
-                // Route route = MaterialPageRoute(builder: (c) => CartPage());
-                // Navigator.push(context, route);
+                Route route =
+                MaterialPageRoute(builder: (c) => CartPage());
+            Navigator.push(context, route);
               },
             ),
             Positioned(

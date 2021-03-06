@@ -57,7 +57,7 @@ class _SearchProductState extends State<SearchProduct>
       height: 80.0,
       decoration: new BoxDecoration(
         gradient: new LinearGradient(
-          colors: [Color(theme),Color(theme)],
+          colors: [Colors.teal, Colors.teal],
           begin: const FractionalOffset(0.0, 0.0),
           end: const FractionalOffset(1.0,0.0),
           stops: [0.0,1.0],

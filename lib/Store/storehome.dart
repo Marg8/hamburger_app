@@ -159,7 +159,7 @@ Widget sourceInfo(ItemModel model, BuildContext context,
               children: [
                 TableRow(children: [
                   Container(
-                    height: 280.0,
+                    height: 150.0,
                     width: 50,
                     decoration: BoxDecoration(
                       boxShadow: [
@@ -174,7 +174,7 @@ Widget sourceInfo(ItemModel model, BuildContext context,
                         colors: [Colors.white, Colors.white],
                       ),
                     ),
-                    child: Column(
+                    child: Row(
                       children: [
                         FadeInImage(
                           image: NetworkImage(model.thumbnailUrl),
@@ -213,23 +213,24 @@ Widget sourceInfo(ItemModel model, BuildContext context,
                               SizedBox(
                                 height: 5.0,
                               ),
-                              /*Container(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                model.shortInfo ?? '',
-                                style: TextStyle(
-                                    color: Colors.black54, fontSize: 12.0),
+                              Container(
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        model.shortInfo ?? '',
+                                        style: TextStyle(
+                                            color: Colors.black54,
+                                            fontSize: 12.0),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 15.0,
-                      ),*/
+                              SizedBox(
+                                height: 15.0,
+                              ),
                               Row(
                                 children: [
                                   /*Container(
@@ -300,30 +301,7 @@ Widget sourceInfo(ItemModel model, BuildContext context,
                                       Padding(
                                         padding: EdgeInsets.only(left: 30.0),
                                         child: Row(
-                                          children: [
-                                            Text(
-                                              r"$",
-                                              style: TextStyle(
-                                                fontSize: 18.0,
-                                                color: Colors.red,
-                                                decoration:
-                                                    TextDecoration.lineThrough,
-                                              ),
-                                            ),
-                                            Text(
-                                              (model.price +
-                                                          model.price * 0.30 ??
-                                                      '')
-                                                  .toString()
-                                                  .replaceAll(".0", ""),
-                                              style: TextStyle(
-                                                fontSize: 18.0,
-                                                color: Colors.red,
-                                                decoration:
-                                                    TextDecoration.lineThrough,
-                                              ),
-                                            ),
-                                          ],
+                                          children: [],
                                         ),
                                       ),
 
@@ -368,7 +346,7 @@ Widget sourceInfo(ItemModel model, BuildContext context,
                                           color: Colors.black,
                                         ),
                                         onPressed: () {
-                                          checkItemInCart(model.title, context);
+                                          // checkItemInCart(model.title, context);
                                         },
                                       )
                                     : IconButton(
@@ -613,7 +591,7 @@ Widget sourceInfo(ItemModel model, BuildContext context,
                                           color: Colors.black,
                                         ),
                                         onPressed: () {
-                                          checkItemInCart(model.title, context);
+                                          // checkItemInCart(model.title, context);
                                         },
                                       )
                                     : IconButton(
@@ -666,30 +644,5 @@ Widget card({Color primaryColor = Colors.redAccent, String imgPath}) {
   );
 }
 
-void checkItemInCart(String titleAsID, BuildContext context) {
-  EcommerceApp.sharedPreferences
-          .getStringList(EcommerceApp.userCartList)
-          .contains(titleAsID.toString())
-      ? Fluttertoast.showToast(msg: "Articulo ya existe en Carrito.")
-      : addItemToCart(titleAsID, context);
-}
 
-addItemToCart(String titleAsID, BuildContext context) {
-  List temCartList =
-      EcommerceApp.sharedPreferences.getStringList(EcommerceApp.userCartList);
-  temCartList.add(titleAsID);
 
-  EcommerceApp.firestore
-      .collection(EcommerceApp.collectionUser)
-      .document(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-      .updateData({
-    EcommerceApp.userCartList: temCartList,
-  }).then((v) {
-    Fluttertoast.showToast(msg: "Agregado con exito.");
-
-    EcommerceApp.sharedPreferences
-        .setStringList(EcommerceApp.userCartList, temCartList);
-
-    Provider.of<CartItemCounter>(context, listen: false).displayResult();
-  });
-}

@@ -9,10 +9,10 @@ import 'package:app_hamburger/Widgets/myDrawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:app_hamburger/src/hamburgers_list.dart';
 import 'package:provider/provider.dart';
-
 
 class CartPage extends StatefulWidget {
   @override
@@ -35,12 +35,15 @@ class _CartPageState extends State<CartPage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          if (EcommerceApp.sharedPreferences.getStringList(EcommerceApp.userCartList).length == 1) {
+          if (EcommerceApp.sharedPreferences
+                  .getStringList(EcommerceApp.userCartList)
+                  .length ==
+              1) {
             Fluttertoast.showToast(msg: "Your Cart is empty");
-          }
-          else {
-            Route route = MaterialPageRoute(builder: (c) => Address(totalAmount: totalAmount));
-            Navigator.push(context, route);
+          } else {
+            Route route = MaterialPageRoute(
+                builder: (c) => Address(totalAmount: totalAmount));
+            Navigator.pushReplacement(context, route);
           }
         },
         label: Text("Comprar Ahora"),
@@ -60,7 +63,8 @@ class _CartPageState extends State<CartPage> {
                   child: cartProvider.count == 0
                       ? Container()
                       : Text(
-                          r"Precio Total: $" + "${amountProvider.totalAmount.toInt()} MXN",
+                          r"Precio Total: $" +
+                              "${amountProvider.totalAmount.toInt()} MXN",
                           style: TextStyle(
                               color: Colors.black,
                               fontSize: 20.0,
@@ -72,10 +76,12 @@ class _CartPageState extends State<CartPage> {
           ),
           StreamBuilder<QuerySnapshot>(
               stream: EcommerceApp.firestore
-                  .collection("items")
-                  .where("title",
-                      whereIn: EcommerceApp.sharedPreferences
-                          .getStringList(EcommerceApp.userCartList))
+                  .collection(EcommerceApp.collectionUser)
+                  .document(EcommerceApp.sharedPreferences
+                      .getString(EcommerceApp.userUID))
+                  .collection(EcommerceApp.userCartList)
+                  .limit(50)
+                  .orderBy("publishedDate", descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
                 return !snapshot.hasData
@@ -86,33 +92,37 @@ class _CartPageState extends State<CartPage> {
                       )
                     : snapshot.data.documents.length == 0
                         ? beginBuildingCart()
-                        : SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) {
-                                ItemModel model = ItemModel.fromJson(
-                                    snapshot.data.documents[index].data);
+                        : SliverStaggeredGrid.countBuilder(
+                            crossAxisCount: 1,
+                            staggeredTileBuilder: (c) => StaggeredTile.fit(1),
+                            itemBuilder: (context, index) {
+                              ItemModel model = ItemModel.fromJson(
+                                  snapshot.data.documents[index].data);
 
-                                if (index == 0) {
-                                  totalAmount = 0;
-                                  totalAmount = model.price + totalAmount;
-                                } else {
-                                  totalAmount = model.price + totalAmount;
-                                }
+                              if (index == 0) {
+                                totalAmount = 0;
+                                totalAmount =
+                                    model.price * model.qtyitems + totalAmount;
+                              } else {
+                                totalAmount =
+                                    model.price * model.qtyitems + totalAmount;
+                              }
 
-                                if (snapshot.data.documents.length - 1 == index) {
-                                  WidgetsBinding.instance.addPostFrameCallback((c) {
-                                    Provider.of<TotalAmount>(context,listen: false).display(totalAmount);
-                                  });
-                                }
-                                return sourceInfoBurger(model, context,
-                                    removeCartFunction: () =>
-                                        removeItemFromUserCart(
-                                            model.title));
-                              },
-                              childCount: snapshot.hasData
-                                  ? snapshot.data.documents.length
-                                  : 0,
-                            ),
+                              if (snapshot.data.documents.length - 1 == index) {
+                                WidgetsBinding.instance
+                                    .addPostFrameCallback((c) {
+                                  Provider.of<TotalAmount>(context,
+                                          listen: false)
+                                      .display(totalAmount);
+                                });
+                              }
+                              return sourceInfoBurger(model, context,
+                                  removeCartFunction: () =>
+                                      deleteProduct(context, model.productId).them(removeItemFromUserCart(model.title)),);
+                            },
+                            itemCount: snapshot.hasData
+                                ? snapshot.data.documents.length
+                                : 0,
                           );
               })
         ],
@@ -120,15 +130,17 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
-  beginBuildingCart()
-  {
+  beginBuildingCart() {
     return SliverToBoxAdapter(
       child: Container(
         height: 100.0,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.insert_emoticon, color: Colors.black,),
+            Icon(
+              Icons.insert_emoticon,
+              color: Colors.black,
+            ),
             Text("Cart is empty"),
             Text("Star adding items to your Cart"),
           ],
@@ -137,15 +149,16 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
-  removeItemFromUserCart(String titleAsId)
-  {
+
+  removeItemFromUserCart(String titleAsId) {
     List temCartList =
-    EcommerceApp.sharedPreferences.getStringList(EcommerceApp.userCartList);
+        EcommerceApp.sharedPreferences.getStringList(EcommerceApp.userCartList);
     temCartList.remove(titleAsId);
 
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
-        .document(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .document(
+            EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
         .updateData({
       EcommerceApp.userCartList: temCartList,
     }).then((v) {
@@ -157,6 +170,38 @@ class _CartPageState extends State<CartPage> {
       Provider.of<CartItemCounter>(context, listen: false).displayResult();
 
       totalAmount = 0;
+
+      Route route = MaterialPageRoute(builder: (c) => CartPage());
+                    Navigator.pushReplacement(context, route);
     });
   }
+
+  deleteProduct(BuildContext context, String productId) {
+    EcommerceApp.firestore
+        .collection(EcommerceApp.collectionUser)
+        .document(
+            EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .collection(EcommerceApp.userCartList)
+        .document(productId)
+        .delete();
+
+    Fluttertoast.showToast(msg: "Producto Borrado de Carro");
+  }
+
+  // getImageSelection(ItemModel itemModel) {
+  //   EcommerceApp.firestore
+  //       .collection(EcommerceApp.collectionUser)
+  //       .document(
+  //           EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+  //       .collection(EcommerceApp.userCartList)
+  //       .snapshots();
+
+  // final imageFile = widget.itemModel.thumbnailUrl;
+  // final productIdCode = widget.itemModel.productId;
+
+  // setState(() {
+  //   file = File(imageFile);
+  //   productId = productIdCode;
+  // });
+  // }
 }

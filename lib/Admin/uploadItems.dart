@@ -1,6 +1,6 @@
 import 'dart:io';
+import 'package:app_hamburger/Admin/adminShifOrders1.dart';
 import 'package:app_hamburger/Admin/updateItems.dart';
-import 'package:app_hamburger/Authentication/authenication.dart';
 import 'package:app_hamburger/Models/item.dart';
 import 'package:app_hamburger/Store/storehome.dart';
 import 'package:app_hamburger/Widgets/loadingWidget.dart';
@@ -11,7 +11,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
+
 
 int theme = 0xff009688;
 
@@ -53,7 +53,7 @@ class _UploadPageState extends State<UploadPage> with AutomaticKeepAliveClientMi
     
   }
 
-  displayAdminHomeScreen() {
+  Widget displayAdminHomeScreen() {
     return Scaffold(
       appBar: AppBar(
         flexibleSpace: Container(
@@ -70,8 +70,8 @@ class _UploadPageState extends State<UploadPage> with AutomaticKeepAliveClientMi
         leading: IconButton(
           icon: Icon(Icons.border_color, color: Colors.white,),
           onPressed: () {
-            // Route route = MaterialPageRoute(builder: (c) => AdminShiftOrders());
-            // Navigator.pushReplacement(context, route);
+            Route route = MaterialPageRoute(builder: (c) => AdminShiftOrders1());
+            Navigator.pushReplacement(context, route);
           },
         ),
 
@@ -871,7 +871,7 @@ Widget sourceInfoAdmin(ItemModel model, BuildContext context,
                                   color: Colors.black,
                                 ),
                                 onPressed: () {
-                                  checkItemInCart(model.title, context);
+                                  // checkItemInCart(model.title, context);
                                 },
                               )
                             : IconButton(

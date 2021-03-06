@@ -1,13 +1,17 @@
-import 'package:animate_do/animate_do.dart';
+import 'package:app_hamburger/Config/config.dart';
+import 'package:app_hamburger/Counters/cartitemcounter.dart';
 import 'package:app_hamburger/Models/item.dart';
 import 'package:app_hamburger/Store/storehome.dart';
-import 'package:app_hamburger/Widgets/customAppBar.dart';
 import 'package:app_hamburger/Widgets/loadingWidget.dart';
-import 'package:app_hamburger/Widgets/myDrawer.dart';
+
 import 'package:app_hamburger/main.dart';
 import 'package:app_hamburger/src/burger_page.dart';
+import 'package:app_hamburger/src/categories.dart';
+import 'package:app_hamburger/src/hamburgers_list.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class ProductPage extends StatefulWidget {
@@ -18,7 +22,6 @@ class ProductPage extends StatefulWidget {
   _ProductPageState createState() => _ProductPageState();
 }
 
-int qtyItems1 = 1;
 List<dynamic> _colores = ["Negro", "Verde", "Amarillo", "Azul", ""];
 String opcionesColor = "";
 
@@ -30,7 +33,9 @@ class _ProductPageState extends State<ProductPage> {
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
-            actions: [AgregadosCompras(), Avatar()],
+            actions: [
+              AgregadosCompras(),
+            ],
           ),
           body: buildListView(context)),
     );
@@ -72,12 +77,11 @@ class _ProductPageState extends State<ProductPage> {
                   width: 200,
                   height: 200,
                 ),
-                InofrmacionProducto(
-                  widget: widget,
-                ),
+                InofrmacionProducto(widget.itemModel),
               ]),
 
               SizedBox(height: 20.0),
+
               MultipleOptions(
                 widget: widget,
               ),
@@ -91,13 +95,18 @@ class _ProductPageState extends State<ProductPage> {
   }
 }
 
-class InofrmacionProducto extends StatelessWidget {
-  const InofrmacionProducto({
-    Key key,
-    @required this.widget,
-  }) : super(key: key);
+class InofrmacionProducto extends StatefulWidget {
+  final ItemModel itemModel;
+  InofrmacionProducto(this.itemModel);
 
-  final ProductPage widget;
+  @override
+  _InofrmacionProductoState createState() =>
+      _InofrmacionProductoState(this.itemModel);
+}
+
+class _InofrmacionProductoState extends State<InofrmacionProducto> {
+  _InofrmacionProductoState(this.itemModel);
+  final ItemModel itemModel;
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +117,10 @@ class InofrmacionProducto extends StatelessWidget {
         children: [
           SizedBox(
             height: 10.0,
+          ),
+          buildText(),
+          SizedBox(
+            height: 3.0,
           ),
           Text(
             r"$ " + widget.itemModel.price.toString() + ".0 MXN",
@@ -130,6 +143,16 @@ class InofrmacionProducto extends StatelessWidget {
       ),
     );
   }
+
+  Text buildText() {
+    setState(() {
+      widget.itemModel.qtyitems.toString();
+    });
+    return Text(
+      "Cantidad: " + widget.itemModel.qtyitems.toString(),
+      style: boldTextStyle,
+    );
+  }
 }
 
 class MultipleOptions extends StatelessWidget {
@@ -147,10 +170,11 @@ class MultipleOptions extends StatelessWidget {
       elevation: 0,
       child: Padding(
         padding:
-            const EdgeInsets.only(top: 20, bottom: 200, left: 25, right: 25),
+            const EdgeInsets.only(top: 20, bottom: 100, left: 25, right: 25),
         child: Column(
           children: <Widget>[
             TouchPill(),
+
             SizedBox(height: 16),
             Container(
               child: Text("Descripcion"),
@@ -165,25 +189,27 @@ class MultipleOptions extends StatelessWidget {
                 ),
               ],
             ),
+
             SizedBox(height: 20.0),
             Text(
               widget.itemModel.longDescription,
               style: largeTextStyle,
             ),
             SizedBox(height: 70),
+
             //controls
             Row(
               children: <Widget>[
                 Expanded(
                   child: InkWell(
                       onTap: () =>
-                          checkItemInCart(widget.itemModel.title, context),
+                          checkItemInCart1(widget.itemModel.title, context),
                       child: AddToCartBottom()),
                 ),
                 SizedBox(width: 10),
-                Expanded(
-                  child: CantidadProducto(),
-                ),
+                // Expanded(
+                //   child: CantidadProducto(widget.itemModel),
+                // ),
               ],
             ),
             SizedBox(height: 30),
@@ -192,6 +218,60 @@ class MultipleOptions extends StatelessWidget {
       ),
     );
   }
+
+  void checkItemInCart1(String titleAsID, BuildContext context) {
+    if(EcommerceApp.sharedPreferences
+            .getStringList(EcommerceApp.userCartList)
+            .contains(titleAsID.toString()) = true){
+              Fluttertoast.showToast(msg: "Articulo ya existe en Carrito.")
+            }else{
+              addItemToCart(titleAsID, context);
+        saveItemInfoUserCart(context);
+            }
+        
+  }
+
+  addItemToCart(String titleAsID, BuildContext context) {
+    List temCartList =
+        EcommerceApp.sharedPreferences.getStringList(EcommerceApp.userCartList);
+    temCartList.add(titleAsID);
+
+    EcommerceApp.firestore
+        .collection(EcommerceApp.collectionUser)
+        .document(
+            EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .updateData({
+      EcommerceApp.userCartList: temCartList,
+    }).then((v) {
+      Fluttertoast.showToast(msg: "Agregado con exito.");
+
+      EcommerceApp.sharedPreferences
+          .setStringList(EcommerceApp.userCartList, temCartList);
+
+      Provider.of<CartItemCounter>(context, listen: false).displayResult();
+    });
+    
+  }
+  saveItemInfoUserCart(BuildContext context) {
+      String productId = DateTime.now().millisecondsSinceEpoch.toString();
+
+      EcommerceApp.firestore
+          .collection(EcommerceApp.collectionUser)
+          .document(
+              EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+              .collection(EcommerceApp.userCartList).document(productId)
+          .setData({
+        "shortInfo": widget.itemModel.shortInfo.toString(),
+        "longDescription": widget.itemModel.longDescription.toString(),
+        "price": widget.itemModel.price.toInt(),
+        "publishedDate": DateTime.now(),
+        "status": "available",
+        "thumbnailUrl": widget.itemModel.thumbnailUrl,
+        "title": widget.itemModel.title.toString(),
+        "qtyitems": widget.itemModel.qtyitems.toInt(),
+        "productId": productId
+      });
+    }
 }
 
 class AddToCartBottom extends StatelessWidget {
@@ -207,16 +287,16 @@ class AddToCartBottom extends StatelessWidget {
         width: 150,
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.teal,width: 2),
+          border: Border.all(color: Colors.orange, width: 2),
           borderRadius: BorderRadius.circular(48),
           gradient: LinearGradient(
             colors: [Colors.orange, Colors.orange],
-            
           ),
         ),
         child: Text(
           "Agregar Compra",
-          style: TextStyle(color: Colors.white, fontSize: 15,fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: Colors.white, fontSize: 15, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
       ),
@@ -224,81 +304,86 @@ class AddToCartBottom extends StatelessWidget {
   }
 }
 
-class CantidadProducto extends StatefulWidget {
-  CantidadProducto({Key key}) : super(key: key);
+// class CantidadProducto extends StatefulWidget {
+//   final ItemModel itemModel;
+//   CantidadProducto(this.itemModel);
 
-  @override
-  _CantidadProductoState createState() => _CantidadProductoState();
-}
+//   @override
+//   _CantidadProductoState createState() =>
+//       _CantidadProductoState(this.itemModel);
+// }
 
-class _CantidadProductoState extends State<CantidadProducto> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 56,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(
-          color: Colors.teal,
-          width: 2,
-        ),
-      ),
-      child: Row(
-        children: <Widget>[
-          Container(
-            width: 50.0,
-            height: 50.0,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.orange,
-            ),
-            child: Container(
-              child: IconButton(
-                icon: Icon(
-                  Icons.remove,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  setState(() {
-                    qtyItems1--;
-                  });
-                },
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              "$qtyItems1",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ),
-          Container(
-            width: 50.0,
-            height: 50.0,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.orange,
-            ),
-            child: Container(
-              child: IconButton(
-                icon: Icon(
-                  Icons.add,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  setState(() {
-                    qtyItems1++;
-                  });
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+// class _CantidadProductoState extends State<CantidadProducto> {
+//   _CantidadProductoState(this.itemModel);
+//   final ItemModel itemModel;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       height: 56,
+//       decoration: BoxDecoration(
+//         borderRadius: BorderRadius.circular(28),
+//         border: Border.all(
+//           color: Colors.teal,
+//           width: 2,
+//         ),
+//       ),
+//       child: Row(
+//         children: <Widget>[
+//           Container(
+//             width: 50.0,
+//             height: 50.0,
+//             decoration: BoxDecoration(
+//               shape: BoxShape.circle,
+//               color: Colors.orange,
+//             ),
+//             child: Container(
+//               child: IconButton(
+//                 icon: Icon(
+//                   Icons.remove,
+//                   color: Colors.white,
+//                 ),
+//                 onPressed: () {
+//                   setState(() {
+//                     widget.itemModel.qtyitems--;
+//                   });
+//                 },
+//               ),
+//             ),
+//           ),
+//           Expanded(
+//             child: Text(
+//               "${widget.itemModel.qtyitems}",
+//               textAlign: TextAlign.center,
+//               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+//             ),
+//           ),
+//           Container(
+//             width: 50.0,
+//             height: 50.0,
+//             decoration: BoxDecoration(
+//               shape: BoxShape.circle,
+//               color: Colors.orange,
+//             ),
+//             child: Container(
+//               child: IconButton(
+//                 icon: Icon(
+//                   Icons.add,
+//                   color: Colors.white,
+//                 ),
+//                 onPressed: () {
+//                   setState(() {
+//                     widget.itemModel.qtyitems++;
+//                   });
+//                 },
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 class TouchPill extends StatelessWidget {
   const TouchPill({
@@ -313,6 +398,26 @@ class TouchPill extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.grey.shade300,
         borderRadius: BorderRadius.circular(4),
+      ),
+    );
+  }
+}
+
+class Avatar extends StatelessWidget {
+  const Avatar({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return CircleAvatar(
+      backgroundColor: Colors.orange,
+      radius: 15,
+      child: CircleAvatar(
+        backgroundImage: NetworkImage(
+          EcommerceApp.sharedPreferences.getString(EcommerceApp.userAvatarUrl),
+        ),
+        radius: 17,
       ),
     );
   }

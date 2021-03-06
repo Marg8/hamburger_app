@@ -24,7 +24,7 @@ class _MyOrdersState extends State<MyOrders> {
           flexibleSpace: Container(
             decoration: new BoxDecoration(
               gradient: new LinearGradient(
-                  colors: [Color(theme),Color(theme)],
+                  colors: [Colors.teal,Colors.teal],
               begin: const FractionalOffset(0.0, 0.0),
               end: const FractionalOffset(1.0,0.0),
               stops: [0.0,1.0],
