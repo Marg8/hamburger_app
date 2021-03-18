@@ -169,7 +169,7 @@ Widget sourceOrderInfo(ItemModel model, BuildContext context,
                                       color: Colors.black, fontSize: 16.0),
                                 ),
                                 Text(
-                                  (model.price ?? '').toString(),
+                                  (model.cartPrice ?? '').toString(),
                                   style: TextStyle(
                                     fontSize: 15.0,
                                     color: Colors.black,
@@ -188,7 +188,7 @@ Widget sourceOrderInfo(ItemModel model, BuildContext context,
                                       fontSize: 14.0, color: Colors.black),
                                 ),
                                 Text(
-                                  "$qtyItems",
+                                  "${model.qtyitems}",
                                   style: TextStyle(
                                       color: Colors.black, fontSize: 16.0),
                                 ),
@@ -315,7 +315,7 @@ Widget sourceOrderInfo2(ItemModel model, BuildContext context,
                                       color: Colors.black, fontSize: 16.0),
                                 ),
                                 Text(
-                                  (model.price ?? '').toString(),
+                                  (model.cartPrice ?? '').toString(),
                                   style: TextStyle(
                                     fontSize: 15.0,
                                     color: Colors.black,
@@ -334,7 +334,7 @@ Widget sourceOrderInfo2(ItemModel model, BuildContext context,
                                       fontSize: 14.0, color: Colors.black),
                                 ),
                                 Text(
-                                  "$qtyItems",
+                                  "${model.qtyitems}",
                                   style: TextStyle(
                                       color: Colors.black, fontSize: 16.0),
                                 ),

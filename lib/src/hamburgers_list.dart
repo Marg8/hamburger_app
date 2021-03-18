@@ -69,7 +69,8 @@ Widget sourceInfoBurger(ItemModel model, BuildContext context,
                                       ),
                                       onPressed: () {
                                         checkItemInCart(model.title, context);
-                                        checkProductIdinCart(model.title,model,context);
+                                        checkProductIdinCart(
+                                            model.title, model, context);
                                       },
                                     )
                                   : IconButton(
@@ -230,7 +231,7 @@ Widget sourceInfoBurger(ItemModel model, BuildContext context,
                                                             FontWeight.bold),
                                                   ),
                                                   Text(
-                                                    (model.price ?? '')
+                                                    (model.cartPrice ?? '')
                                                         .toString(),
                                                     style: TextStyle(
                                                       fontSize: 18.0,
@@ -270,7 +271,13 @@ Widget sourceInfoBurger(ItemModel model, BuildContext context,
                                                   onPressed: () {
                                                     checkItemInCart(
                                                         model.title, context);
-                                                        checkProductIdinCart(model.title,model,context);
+                                                    checkProductIdinCart(
+                                                        model.title,
+                                                        model,
+                                                        context);
+                                                    checkItemInCart2(
+                                                        model.productId,
+                                                        context);
                                                   },
                                                 )
                                               : IconButton(
@@ -339,6 +346,22 @@ checkItemInCart(String titleAsID, BuildContext context) {
       : addItemToCart(titleAsID, context);
 }
 
+checkProductIdinCart(String tittleAsId, ItemModel model, BuildContext context) {
+  EcommerceApp.sharedPreferences
+          .getStringList(EcommerceApp.userCartList)
+          .contains(tittleAsId.toString())
+      ? Fluttertoast.showToast(msg: "Articulo ya existe.")
+      : saveItemInfoUserCart(tittleAsId, model, context);
+}
+
+checkItemInCart2(String productId, BuildContext context) {
+  EcommerceApp.sharedPreferences
+          .getStringList(EcommerceApp.userCartList)
+          .contains(productId.toString())
+      ? Fluttertoast.showToast(msg: "Articulo ya existe en Carrito.")
+      : addItemToCart2(productId, context);
+}
+
 addItemToCart(String titleAsID, BuildContext context) {
   List temCartList =
       EcommerceApp.sharedPreferences.getStringList(EcommerceApp.userCartList);
@@ -359,12 +382,24 @@ addItemToCart(String titleAsID, BuildContext context) {
   });
 }
 
-checkProductIdinCart(String tittleAsId, ItemModel model, BuildContext context) {
-  EcommerceApp.sharedPreferences
-          .getStringList(EcommerceApp.userCartList)
-              .contains(tittleAsId.toString())
-      ? Fluttertoast.showToast(msg: "Articulo ya existe.")
-      : saveItemInfoUserCart(tittleAsId, model, context);
+addItemToCart2(String productId, BuildContext context) {
+  List temCartList =
+      EcommerceApp.sharedPreferences.getStringList(EcommerceApp.userCartListID);
+  temCartList.add(productId);
+
+  EcommerceApp.firestore
+      .collection(EcommerceApp.collectionUser)
+      .document(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+      .updateData({
+    EcommerceApp.userCartListID: temCartList,
+  }).then((v) {
+    Fluttertoast.showToast(msg: "Agregado con exito.");
+
+    EcommerceApp.sharedPreferences
+        .setStringList(EcommerceApp.userCartListID, temCartList);
+
+    Provider.of<CartItemCounter>(context, listen: false).displayResult();
+  });
 }
 
 saveItemInfoUserCart(String tittleAsId, ItemModel model, BuildContext context) {
@@ -373,19 +408,20 @@ saveItemInfoUserCart(String tittleAsId, ItemModel model, BuildContext context) {
   EcommerceApp.firestore
       .collection(EcommerceApp.collectionUser)
       .document(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-      .collection(EcommerceApp.userCartList)
+      .collection(EcommerceApp.userCartList2)
       .document(productId)
       .setData({
     "shortInfo": model.shortInfo.toString(),
     "longDescription": model.longDescription.toString(),
     "price": model.price.toInt(),
+    "cartPrice": model.price.toInt(),
     "publishedDate": DateTime.now(),
     "status": "available",
     "thumbnailUrl": model.thumbnailUrl,
     "title": model.title.toString(),
     "qtyitems": model.qtyitems.toInt(),
     "productId": productId
-  });
+  }).whenComplete(() {checkItemInCart2(productId, context);});
 }
 
 class CantidadProducto extends StatefulWidget {
@@ -479,10 +515,11 @@ class _CantidadProductoState extends State<CantidadProducto> {
         .collection(EcommerceApp.collectionUser)
         .document(
             EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-        .collection(EcommerceApp.userCartList)
+        .collection(EcommerceApp.userCartList2)
         .document(widget.model.productId.toString())
         .updateData({
-      "Price": widget.model.price.toInt(),
+      "price": widget.model.price.toInt(),
+      "cartPrice": widget.model.price.toInt() * widget.model.qtyitems.toInt(),
       "qtyitems": widget.model.qtyitems.toInt(),
     });
   }
@@ -494,10 +531,11 @@ class _CantidadProductoState extends State<CantidadProducto> {
         .collection(EcommerceApp.collectionUser)
         .document(
             EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-        .collection(EcommerceApp.userCartList)
+        .collection(EcommerceApp.userCartList2)
         .document(widget.model.productId.toString())
         .updateData({
       "price": widget.model.price.toInt(),
+      "cartPrice": widget.model.price.toInt() * widget.model.qtyitems.toInt(),
       "qtyitems": widget.model.qtyitems.toInt(),
     });
   }

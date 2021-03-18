@@ -268,19 +268,20 @@ class MultipleOptions extends StatelessWidget {
         .collection(EcommerceApp.collectionUser)
         .document(
             EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-        .collection(EcommerceApp.userCartList)
+        .collection(EcommerceApp.userCartList2)
         .document(productId)
         .setData({
       "shortInfo": widget.itemModel.shortInfo.toString(),
       "longDescription": widget.itemModel.longDescription.toString(),
       "price": widget.itemModel.price.toInt(),
-      // "cartPrice": widget.itemModel.price.toInt(),
+      "cartPrice": widget.itemModel.price.toInt(),
       "publishedDate": DateTime.now(),
       "status": "available",
       "thumbnailUrl": widget.itemModel.thumbnailUrl,
       "title": widget.itemModel.title.toString(),
       "qtyitems": widget.itemModel.qtyitems.toInt(),
       "productId": productId
+      
     });
   }
 }

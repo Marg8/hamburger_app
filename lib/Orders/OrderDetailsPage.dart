@@ -71,14 +71,17 @@ class OrderDetails extends StatelessWidget
                     Divider(height: 2.0,),
                     FutureBuilder<QuerySnapshot>(
                       future: EcommerceApp.firestore
-                      .collection("items")
-                      .where("title",whereIn: dataMap[EcommerceApp.productID])
+      .collection(EcommerceApp.collectionUser)
+      .document(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+      .collection(EcommerceApp.userCartList2)
+                      .where("productId",whereIn: dataMap[EcommerceApp.productID])
                        .getDocuments(),
                       builder: (c, dataSnapshot)
                       {                      
                         return dataSnapshot.hasData
                             ? OrderCard2(
                           itemCount: dataSnapshot.data.documents.length,
+            
                           data: dataSnapshot.data.documents,
                         )
                             : Center(child: circularProgress(),);

@@ -1,9 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
-
-
-
 class ItemModel {
   String title;
   String shortInfo;
@@ -12,21 +8,23 @@ class ItemModel {
   String longDescription;
   String status;
   int price;
+  int cartPrice;
   int qtyitems;
   String productId;
   String color;
 
   ItemModel(
       {this.title,
-        this.shortInfo,
-        this.publishedDate,
-        this.thumbnailUrl,
-        this.longDescription,
-        this.status,
-        this.qtyitems,
-        this.productId,
-        this.color,
-        });
+      this.shortInfo,
+      this.publishedDate,
+      this.thumbnailUrl,
+      this.longDescription,
+      this.status,
+      this.qtyitems,
+      this.productId,
+      this.color,
+      this.price,
+      this.cartPrice});
 
   ItemModel.fromJson(Map<String, dynamic> json) {
     title = json['title'];
@@ -36,8 +34,9 @@ class ItemModel {
     longDescription = json['longDescription'];
     status = json['status'];
     price = json['price'];
+    cartPrice = json["cartPrice"];
     qtyitems = json["qtyitems"];
-    productId =json["productId"];
+    productId = json["productId"];
     color = json["color"];
   }
 
@@ -46,6 +45,7 @@ class ItemModel {
     data['title'] = this.title;
     data['shortInfo'] = this.shortInfo;
     data['price'] = this.price;
+    data["cartPrice"] = this.cartPrice;
     if (this.publishedDate != null) {
       data['publishedDate'] = this.publishedDate;
     }
@@ -54,7 +54,7 @@ class ItemModel {
     data['status'] = this.status;
     data["qtyitems"] = this.qtyitems;
     data["productId"] = this.productId;
-    data["color"] = this.color;    
+    data["color"] = this.color;
     return data;
   }
 }
@@ -75,7 +75,6 @@ class PublishedDate {
   }
 }
 
-
 class ItemColorModel {
   String title;
   String shortInfo;
@@ -88,17 +87,17 @@ class ItemColorModel {
   String productId;
   String color;
 
-  ItemColorModel(
-      {this.title,
-        this.shortInfo,
-        this.publishedDate,
-        this.thumbnailUrl,
-        this.longDescription,
-        this.status,
-        this.qtyitems,
-        this.productId,
-        this.color,
-        });
+  ItemColorModel({
+    this.title,
+    this.shortInfo,
+    this.publishedDate,
+    this.thumbnailUrl,
+    this.longDescription,
+    this.status,
+    this.qtyitems,
+    this.productId,
+    this.color,
+  });
 
   ItemColorModel.fromJson(Map<String, dynamic> json) {
     title = json['title'];
@@ -109,7 +108,7 @@ class ItemColorModel {
     status = json['status'];
     price = json['price'];
     qtyitems = json["qtyitems"];
-    productId =json["productId"];
+    productId = json["productId"];
     color = json["color"];
   }
 

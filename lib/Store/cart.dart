@@ -79,9 +79,8 @@ class _CartPageState extends State<CartPage> {
                   .collection(EcommerceApp.collectionUser)
                   .document(EcommerceApp.sharedPreferences
                       .getString(EcommerceApp.userUID))
-                  .collection(EcommerceApp.userCartList)
-                  .limit(50)
-                  .orderBy("publishedDate", descending: true)
+                  .collection(EcommerceApp.userCartList2)
+                  .where("status", isEqualTo: "available")
                   .snapshots(),
               builder: (context, snapshot) {
                 return !snapshot.hasData
@@ -101,11 +100,9 @@ class _CartPageState extends State<CartPage> {
 
                               if (index == 0) {
                                 totalAmount = 0;
-                                totalAmount =
-                                    model.price + totalAmount;
+                                totalAmount = model.cartPrice + totalAmount;
                               } else {
-                                totalAmount =
-                                    model.price + totalAmount;
+                                totalAmount = model.cartPrice + totalAmount;
                               }
 
                               if (snapshot.data.documents.length - 1 == index) {
@@ -117,14 +114,24 @@ class _CartPageState extends State<CartPage> {
                                 });
                               }
                               return sourceInfoBurger(model, context,
-                                  removeCartFunction: () =>
-                                      deleteProduct(context, model.productId).them(removeItemFromUserCart(model.title)),);
+                                  removeCartFunction: () {
+                                removeItemFromUserCart(model.title);
+                                deleteProduct(context, model.productId);
+                                removeItemFromUserCartID(model.productId);
+                              });
                             },
                             itemCount: snapshot.hasData
                                 ? snapshot.data.documents.length
                                 : 0,
                           );
-              })
+              }),
+          SliverToBoxAdapter(
+            child: Container(
+              height: 100,
+              width: 100,
+              child: Text(""),
+            ),
+          )
         ],
       ),
     );
@@ -149,7 +156,6 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
-
   removeItemFromUserCart(String titleAsId) {
     List temCartList =
         EcommerceApp.sharedPreferences.getStringList(EcommerceApp.userCartList);
@@ -172,7 +178,33 @@ class _CartPageState extends State<CartPage> {
       totalAmount = 0;
 
       Route route = MaterialPageRoute(builder: (c) => CartPage());
-                    Navigator.pushReplacement(context, route);
+      Navigator.pushReplacement(context, route);
+    });
+  }
+
+  removeItemFromUserCartID(String productId) {
+    List temCartList = EcommerceApp.sharedPreferences
+        .getStringList(EcommerceApp.userCartListID);
+    temCartList.remove(productId);
+
+    EcommerceApp.firestore
+        .collection(EcommerceApp.collectionUser)
+        .document(
+            EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .updateData({
+      EcommerceApp.userCartListID: temCartList,
+    }).then((v) {
+      Fluttertoast.showToast(msg: "Item RemovedSuccessfully.");
+
+      EcommerceApp.sharedPreferences
+          .setStringList(EcommerceApp.userCartListID, temCartList);
+
+      Provider.of<CartItemCounter>(context, listen: false).displayResult();
+
+      totalAmount = 0;
+
+      Route route = MaterialPageRoute(builder: (c) => CartPage());
+      Navigator.pushReplacement(context, route);
     });
   }
 
@@ -181,27 +213,10 @@ class _CartPageState extends State<CartPage> {
         .collection(EcommerceApp.collectionUser)
         .document(
             EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-        .collection(EcommerceApp.userCartList)
+        .collection(EcommerceApp.userCartList2)
         .document(productId)
         .delete();
 
     Fluttertoast.showToast(msg: "Producto Borrado de Carro");
   }
-
-  // getImageSelection(ItemModel itemModel) {
-  //   EcommerceApp.firestore
-  //       .collection(EcommerceApp.collectionUser)
-  //       .document(
-  //           EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-  //       .collection(EcommerceApp.userCartList)
-  //       .snapshots();
-
-  // final imageFile = widget.itemModel.thumbnailUrl;
-  // final productIdCode = widget.itemModel.productId;
-
-  // setState(() {
-  //   file = File(imageFile);
-  //   productId = productIdCode;
-  // });
-  // }
 }
