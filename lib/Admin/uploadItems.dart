@@ -31,6 +31,7 @@ class _UploadPageState extends State<UploadPage> with AutomaticKeepAliveClientMi
   TextEditingController _titleTextEditingController = TextEditingController();
   TextEditingController _shortInfoTextEditingController = TextEditingController();
   TextEditingController _qtyitemsTextEditingController = TextEditingController();
+  TextEditingController _categoryTextEditingController = TextEditingController();
   String productId = DateTime.now().millisecondsSinceEpoch.toString();
   bool uploading = false;
   final ImagePicker pickerImg = ImagePicker();
@@ -310,9 +311,9 @@ class _UploadPageState extends State<UploadPage> with AutomaticKeepAliveClientMi
              width: 250.0,
              child: TextField(
                style: TextStyle(color: Colors.black),
-               controller: _shortInfoTextEditingController,
+               controller: _categoryTextEditingController,
                decoration: InputDecoration(
-                 hintText: "Descripcion Corta",
+                 hintText: "Escribir Comida o Bebida o Postre",
                  hintStyle: TextStyle(color: Colors.grey),
                  border: InputBorder.none,
                ),
@@ -337,6 +338,25 @@ class _UploadPageState extends State<UploadPage> with AutomaticKeepAliveClientMi
            ),
          ),
          Divider(color: Colors.black,),
+
+         ListTile(
+           leading: Icon(Icons.perm_device_information, color: Colors.black,),
+           title: Container(
+             width: 250.0,
+             child: TextField(
+               style: TextStyle(color: Colors.black),
+               controller: _shortInfoTextEditingController,
+               decoration: InputDecoration(
+                 hintText: "Descripcion Corta",
+                 hintStyle: TextStyle(color: Colors.grey),
+                 border: InputBorder.none,
+               ),
+             ),
+           ),
+         ),
+         Divider(color: Colors.black,),
+
+         
 
          ListTile(
            leading: Icon(Icons.perm_device_information, color: Colors.black,),
@@ -424,6 +444,7 @@ class _UploadPageState extends State<UploadPage> with AutomaticKeepAliveClientMi
       _priceTextEditingController.clear();
       _qtyitemsTextEditingController.clear();
       _shortInfoTextEditingController.clear();
+      _categoryTextEditingController.clear();
     });
   }
 
@@ -457,7 +478,8 @@ class _UploadPageState extends State<UploadPage> with AutomaticKeepAliveClientMi
       "thumbnailUrl": downloadUrl,
       "title": _titleTextEditingController.text.trim(),
       "qtyitems": int.parse(_qtyitemsTextEditingController.text),
-      "productId": productId
+      "productId": productId,
+      "category": _categoryTextEditingController.text.trim(),
     });
     setState(() {
       file = null;
@@ -468,6 +490,7 @@ class _UploadPageState extends State<UploadPage> with AutomaticKeepAliveClientMi
       _priceTextEditingController.clear();
       _descriptionTextEditingController.clear();
       _qtyitemsTextEditingController.clear();
+      _categoryTextEditingController.clear();
     });
   }
 }

@@ -32,6 +32,7 @@ class _UpdatePageState extends State<UpdatePage> with AutomaticKeepAliveClientMi
   TextEditingController _titleTextEditingController = TextEditingController();
   TextEditingController _shortInfoTextEditingController = TextEditingController();
   TextEditingController _qtyitemsTextEditingController = TextEditingController();
+  TextEditingController _categoryTextEditingController = TextEditingController();
   String productId ;
   final ImagePicker pickerImg = ImagePicker();
   
@@ -99,6 +100,23 @@ class _UpdatePageState extends State<UpdatePage> with AutomaticKeepAliveClientMi
              ),
             
              Padding(padding: EdgeInsets.only(top: 12.0)),
+
+             ListTile(
+               leading: Icon(Icons.perm_device_information, color: Colors.black,),
+               title: Container(
+                 width: 250.0,
+                 child: TextField(
+                   style: TextStyle(color: Colors.black),
+                   controller: _categoryTextEditingController,
+                   decoration: InputDecoration(
+                     labelText: "Escribir Comida o Bebida o Postre",
+                     hintStyle: TextStyle(color: Colors.grey),
+                     border: InputBorder.none,
+                   ),
+                 ),
+               ),
+             ),
+             Divider(color: Colors.black,),
 
               ListTile(
                leading: Icon(Icons.perm_device_information, color: Colors.black,),
@@ -269,6 +287,7 @@ class _UpdatePageState extends State<UpdatePage> with AutomaticKeepAliveClientMi
           _titleTextEditingController.clear();
           _priceTextEditingController.clear();
           _qtyitemsTextEditingController.clear();
+          _categoryTextEditingController.clear();
         });
       }
 
@@ -281,6 +300,7 @@ class _UpdatePageState extends State<UpdatePage> with AutomaticKeepAliveClientMi
           _titleTextEditingController.text = widget.itemModel.title;
           _priceTextEditingController.text = widget.itemModel.price.toString();
           _qtyitemsTextEditingController.text = widget.itemModel.qtyitems.toString();
+          _categoryTextEditingController.text = widget.itemModel.category.toString();
         
       }
     
@@ -323,6 +343,7 @@ class _UpdatePageState extends State<UpdatePage> with AutomaticKeepAliveClientMi
           "thumbnailUrl": widget.itemModel.thumbnailUrl,      
           "title": _titleTextEditingController.text.trim(),
           "qtyitems": int.parse(_qtyitemsTextEditingController.text),
+          "category": widget.itemModel.category,
 
           
         });
@@ -334,6 +355,7 @@ class _UpdatePageState extends State<UpdatePage> with AutomaticKeepAliveClientMi
           _priceTextEditingController.clear();
           _descriptionTextEditingController.clear();
           _qtyitemsTextEditingController.clear();
+          _categoryTextEditingController.clear();
         });
       }
     

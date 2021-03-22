@@ -1,8 +1,10 @@
 import 'dart:async';
+
 import 'package:app_hamburger/Authentication/authenication.dart';
 import 'package:app_hamburger/Config/config.dart';
 import 'package:app_hamburger/Counters/ItemQuantity.dart';
 import 'package:app_hamburger/Counters/cartitemcounter.dart';
+import 'package:app_hamburger/Counters/categoryProvider.dart';
 import 'package:app_hamburger/Counters/changeAddresss.dart';
 import 'package:app_hamburger/Counters/totalMoney.dart';
 import 'package:app_hamburger/Models/item.dart';
@@ -28,6 +30,7 @@ Future<void> main() async {
 
   return runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => ProductoModel()),
+    ChangeNotifierProvider(create: (_) => NewsService()),
   ], child: MyApp()));
 }
 
@@ -63,8 +66,14 @@ class Hamburger extends StatefulWidget {
 }
 
 class _HamburgerState extends State<Hamburger> {
+  
   @override
   Widget build(BuildContext context) {
+   
+    final newsService = Provider.of<NewsService>(context, listen: false);
+    print(newsService.selectedCategory);
+    
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -81,17 +90,15 @@ class _HamburgerState extends State<Hamburger> {
               AgregadosCompras(),
             ],
           ),
-
           Header(),
           Categories(),
-          
           StreamBuilder<QuerySnapshot>(
               stream: Firestore.instance
-                  .collection("items")
-                  .limit(100)
-                  .orderBy("publishedDate", descending: true)
-                  .snapshots(),
-              builder: (context, dataSnapshot) {
+        .collection("items")
+        .limit(100)
+        .where("category", isEqualTo: newsService.selectedCategory)        
+        .snapshots(),
+              builder: (context,AsyncSnapshot<QuerySnapshot> dataSnapshot) {
                 return !dataSnapshot.hasData
                     ? SliverToBoxAdapter(
                         child: Center(
@@ -112,10 +119,6 @@ class _HamburgerState extends State<Hamburger> {
                               itemCount: dataSnapshot.data.documents.length,
                             )));
               }),
-
-              
-
-          
         ],
       ),
       extendBody: true,
@@ -149,6 +152,7 @@ class _HamburgerState extends State<Hamburger> {
       drawer: MyDrawer(),
     );
   }
+
 }
 
 class AgregadosCompras extends StatelessWidget {
@@ -166,8 +170,7 @@ class AgregadosCompras extends StatelessWidget {
             color: Colors.white,
           ),
           onPressed: () {
-            Route route =
-                MaterialPageRoute(builder: (c) => CartPage());
+            Route route = MaterialPageRoute(builder: (c) => CartPage());
             Navigator.push(context, route);
           },
         ),
@@ -190,8 +193,7 @@ class AgregadosCompras extends StatelessWidget {
                   builder: (context, counter, _) {
                     return Text(
                       (EcommerceApp.sharedPreferences
-                                  .getStringList(
-                                      EcommerceApp.userCartList)
+                                  .getStringList(EcommerceApp.userCartList)
                                   .length -
                               1)
                           .toString(),
