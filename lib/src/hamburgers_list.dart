@@ -44,6 +44,7 @@ Widget sourceInfoBurger(ItemModel model, BuildContext context,
                                   color: Colors.white,
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
                             ),
                           ),
                           Spacer(),
@@ -93,7 +94,7 @@ Widget sourceInfoBurger(ItemModel model, BuildContext context,
                         ],
                       )),
                   elevation: 3,
-                  margin: EdgeInsets.all(10),
+                  margin: EdgeInsets.only(top: 5, left: 10, right: 10),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.only(
                           bottomLeft: Radius.circular(45),
@@ -421,7 +422,9 @@ saveItemInfoUserCart(String tittleAsId, ItemModel model, BuildContext context) {
     "title": model.title.toString(),
     "qtyitems": model.qtyitems.toInt(),
     "productId": productId
-  }).whenComplete(() {checkItemInCart2(productId, context);});
+  }).whenComplete(() {
+    checkItemInCart2(productId, context);
+  });
 }
 
 class CantidadProducto extends StatefulWidget {
@@ -463,7 +466,12 @@ class _CantidadProductoState extends State<CantidadProducto> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  _removeProd();
+                  int min = widget.model.qtyitems;
+                  if (min > 1) {
+                    _removeProd();
+                  }else {
+                    return null;
+                  }
                 },
               ),
             ),
@@ -498,7 +506,12 @@ class _CantidadProductoState extends State<CantidadProducto> {
                   color: Colors.white,
                 ),
                 onPressed: () {
-                  _addProd();
+                  int max = widget.model.qtyitems;
+                  if (max < 20) {
+                    _addProd();
+                  } else {
+                    return null;
+                  }
                 },
               ),
             ),

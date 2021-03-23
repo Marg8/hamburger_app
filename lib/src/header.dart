@@ -2,6 +2,8 @@ import 'package:app_hamburger/Config/config.dart';
 import 'package:app_hamburger/Store/Search.dart';
 import 'package:flutter/material.dart';
 
+import '../Widgets/loadingWidget.dart';
+
 class Header extends StatefulWidget {
   
 
@@ -43,7 +45,7 @@ class _HeaderState extends State<Header> {
                         CircleAvatar(
                         backgroundColor: Colors.orange,
                         radius: 35,
-                        child: CircleAvatar(
+                        child: CircleAvatar(onBackgroundImageError: null ,
                           backgroundImage: NetworkImage(
                          EcommerceApp.sharedPreferences.getString(EcommerceApp.userAvatarUrl),
                        ),

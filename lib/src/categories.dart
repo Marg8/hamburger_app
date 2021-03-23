@@ -5,10 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 
 import '../main.dart';
-import '../main.dart';
-import '../main.dart';
-import '../main.dart';
-import '../main.dart';
+
 
 class Categories extends StatefulWidget {
   @override

@@ -30,7 +30,7 @@ Future<void> main() async {
 
   return runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => ProductoModel()),
-    ChangeNotifierProvider(create: (_) => NewsService()),
+    
   ], child: MyApp()));
 }
 
@@ -40,6 +40,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => NewsService()),
         ChangeNotifierProvider(create: (c) => CartItemCounter()),
         ChangeNotifierProvider(create: (c) => ItemQuantity()),
         ChangeNotifierProvider(create: (c) => AddressChanger()),

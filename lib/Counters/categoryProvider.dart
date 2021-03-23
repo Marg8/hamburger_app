@@ -72,11 +72,11 @@ class NewsService with ChangeNotifier {
 
   getArticleByCategory(String category) async{
 
-    // if(this.categoryArticles[category].length > 0){
-    //   this._isLoading = false;
-    //   notifyListeners();
-    //   return this.categoryArticles[category];
-    // }
+    if(this.categoryArticles[category].length > 0){
+      this._isLoading = false;
+      notifyListeners();
+      return this.categoryArticles[category];
+    }
 
     // final url ="$_URL_NEWS/top-headlines?apiKey=$_APIKEY&country=us&category=$category";
     // final resp = await http.get(url);

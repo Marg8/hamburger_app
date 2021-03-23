@@ -10,6 +10,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:app_hamburger/Widgets/orderCard.dart';
 import 'package:intl/intl.dart';
 
+import '../Widgets/loadingWidget.dart';
+
 String getOrderId = "";
 
 class OrderDetails extends StatelessWidget {
@@ -42,9 +44,9 @@ class OrderDetails extends StatelessWidget {
               return snapshot.hasData
                   ? Container(
                       child: Column(children: [
-                        StatusBanner(
-                          status: dataMap[EcommerceApp.isSuccess],
-                        ),
+                        // StatusBanner(
+                        //   status: dataMap[EcommerceApp.isSuccess],
+                        // ),
                         SizedBox(
                           height: 10.0,
                         ),

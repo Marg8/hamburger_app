@@ -123,7 +123,7 @@ class _InofrmacionProductoState extends State<InofrmacionProducto> {
             height: 3.0,
           ),
           Text(
-            r"$ " + widget.itemModel.price.toString() + ".0 MXN",
+            r"$ " + widget.itemModel.cartPrice.toString() + ".0 MXN",
             style: boldTextStyle,
           ),
           SizedBox(
@@ -205,7 +205,8 @@ class MultipleOptions extends StatelessWidget {
                       onTap: () {
                         checkItemInCart1(widget.itemModel.title, context);
 
-                        checkProductIdinCart(widget.itemModel.title, widget.itemModel,context);
+                        checkProductIdinCart(
+                            widget.itemModel.title, widget.itemModel, context);
                       },
                       child: AddToCartBottom()),
                 ),
@@ -261,9 +262,9 @@ class MultipleOptions extends StatelessWidget {
   }
 
   saveItemInfoUserCart(
-      String tittleAsId, ItemModel itemModel, BuildContext context) {
+      String tittleAsId, ItemModel model, BuildContext context) {
     String productId = DateTime.now().millisecondsSinceEpoch.toString();
-
+    int qty = 1;
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
         .document(
@@ -271,17 +272,18 @@ class MultipleOptions extends StatelessWidget {
         .collection(EcommerceApp.userCartList2)
         .document(productId)
         .setData({
-      "shortInfo": widget.itemModel.shortInfo.toString(),
-      "longDescription": widget.itemModel.longDescription.toString(),
-      "price": widget.itemModel.price.toInt(),
-      "cartPrice": widget.itemModel.price.toInt(),
+      "shortInfo": model.shortInfo.toString(),
+      "longDescription": model.longDescription.toString(),
+      "price": model.price.toInt(),
+      "cartPrice": model.price.toInt(),
       "publishedDate": DateTime.now(),
       "status": "available",
-      "thumbnailUrl": widget.itemModel.thumbnailUrl,
-      "title": widget.itemModel.title.toString(),
-      "qtyitems": widget.itemModel.qtyitems.toInt(),
+      "thumbnailUrl": model.thumbnailUrl,
+      "title": model.title.toString(),
+      "qtyitems": qty.toInt(),
       "productId": productId
-      
+    }).whenComplete(() {
+      checkItemInCart2(productId, context);
     });
   }
 }

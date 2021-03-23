@@ -31,7 +31,7 @@ class _PaymentPageState extends State<PaymentPage> {
       child: Container(
         decoration: new BoxDecoration(
           gradient: new LinearGradient(
-            colors: [Colors.black, Colors.black],
+            colors: [Colors.white, Colors.white],
             begin: const FractionalOffset(0.0, 0.0),
             end: const FractionalOffset(1.0, 0.0),
             stops: [0.0, 1.0],
@@ -40,24 +40,46 @@ class _PaymentPageState extends State<PaymentPage> {
         ),
         child: Center(
           child: Column(
+            
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              TextButton(
+                            
+                
+                onPressed: () => Null,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Colors.orange
+                  ),
+                  
+                  child: Text(
+                    "Entrega a Domicilio",
+                    style: TextStyle(fontSize: 30.0,color: Colors.white),
+                  ),
+                ),
+              ),
               Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Image.asset("images/cash.png"),
+                child: Image.asset("images/delvham.png"),
               ),
               SizedBox(
                 height: 10.0,
               ),
-              FlatButton(
-                color: Colors.blue,
-                textColor: Colors.white,
-                padding: EdgeInsets.all(8.0),
-                splashColor: Colors.blue,
+              TextButton(
+                            
+                
                 onPressed: () => addOrderDetails(),
-                child: Text(
-                  "Confirmar Orden",
-                  style: TextStyle(fontSize: 30.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Colors.orange
+                  ),
+                  
+                  child: Text(
+                    "Confirmar Orden",
+                    style: TextStyle(fontSize: 30.0,color: Colors.white),
+                  ),
                 ),
               ),
             ],
@@ -196,7 +218,7 @@ Future cartDataOrder(List cart) async {
       .then((querySnapshot) {
     querySnapshot.documents.forEach((productId) {
       try {
-        if (cart.contains(productId.documentID)) {
+        if (cart.contains(productId.documentID.toString())) {
           batch.updateData(productId.reference, {"status": "Order"});
         }
       } on FormatException catch (error) {

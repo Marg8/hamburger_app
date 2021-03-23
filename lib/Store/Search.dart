@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 
 import '../Widgets/customAppBar.dart';
+import '../main.dart';
 
 
 
@@ -44,6 +45,37 @@ class _SearchProductState extends State<SearchProduct>
             )
                 : Text("Escriba en Area de buscador para ontener informacion");
           },
+        ),
+        extendBody: true,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Route route = MaterialPageRoute(builder: (c) => Hamburger());
+            Navigator.push(context, route);
+          },
+          child: Icon(Icons.home),
+        ),
+        bottomNavigationBar: ClipRRect(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(45)),
+          child: BottomAppBar(
+            shape: CircularNotchedRectangle(),
+            child: Row(
+              children: [
+                Spacer(),
+                IconButton(
+                    icon: Icon(Icons.add_alert),
+                    color: Colors.white,
+                    onPressed: () {}),
+                Spacer(),
+                Spacer(),
+                IconButton(
+                    icon: Icon(Icons.turned_in),
+                    color: Colors.white,
+                    onPressed: () {}),
+                Spacer(),
+              ],
+            ),
+          ),
         ),
       ),
     );

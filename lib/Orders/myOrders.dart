@@ -5,14 +5,12 @@ import 'package:app_hamburger/Widgets/orderCard.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../Widgets/loadingWidget.dart';
-
+import '../main.dart';
 
 class MyOrders extends StatefulWidget {
   @override
   _MyOrdersState createState() => _MyOrdersState();
 }
-
-
 
 class _MyOrdersState extends State<MyOrders> {
   @override
@@ -20,25 +18,30 @@ class _MyOrdersState extends State<MyOrders> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-        iconTheme: IconThemeData(color:Colors.white),
+          iconTheme: IconThemeData(color: Colors.white),
           flexibleSpace: Container(
             decoration: new BoxDecoration(
               gradient: new LinearGradient(
-                  colors: [Colors.teal,Colors.teal],
-              begin: const FractionalOffset(0.0, 0.0),
-              end: const FractionalOffset(1.0,0.0),
-              stops: [0.0,1.0],
-              tileMode: TileMode.clamp,
+                colors: [Colors.teal, Colors.teal],
+                begin: const FractionalOffset(0.0, 0.0),
+                end: const FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp,
               ),
             ),
           ),
           centerTitle: true,
-          title: Text("Lista de Ordenes", style: TextStyle(color: Colors.white),),
+          title: Text(
+            "Lista de Ordenes",
+            style: TextStyle(color: Colors.white),
+          ),
           actions: [
             IconButton(
-              icon: Icon(Icons.arrow_drop_down_circle, color: Colors.white,),
-              onPressed: ()
-              {
+              icon: Icon(
+                Icons.arrow_drop_down_circle,
+                color: Colors.white,
+              ),
+              onPressed: () {
                 Route route = MaterialPageRoute(builder: (c) => StoreHome());
                 Navigator.push(context, route);
               },
@@ -48,39 +51,76 @@ class _MyOrdersState extends State<MyOrders> {
         drawer: MyDrawer(),
         body: StreamBuilder<QuerySnapshot>(
           stream: EcommerceApp.firestore
-          .collection(EcommerceApp.collectionUser)
-          .document(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-          .collection(EcommerceApp.collectionOrders).snapshots(),
-
-          builder: (c, snapshot)
-          {
+              .collection(EcommerceApp.collectionUser)
+              .document(EcommerceApp.sharedPreferences
+                  .getString(EcommerceApp.userUID))
+              .collection(EcommerceApp.collectionOrders)
+              .snapshots(),
+          builder: (c, snapshot) {
             return snapshot.hasData
                 ? ListView.builder(
-              itemCount: snapshot.data.documents.length,
-              itemBuilder: (c, index){
-                return FutureBuilder<QuerySnapshot>(
-                  future: EcommerceApp.firestore
-      .collection(EcommerceApp.collectionUser)
-      .document(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-      .collection(EcommerceApp.userCartList2)
-                  .where("productId", whereIn: snapshot.data.documents[index].data[EcommerceApp.productID])
-                  .getDocuments(),
-
-                  builder: (c, snap)
-                  {
-                    return snap.hasData
-                        ? OrderCard(
-                      itemCount: snap.data.documents.length,
-                      data: snap.data.documents,
-                      orderID: snapshot.data.documents[index].documentID,
-                    )
-                    :Center(child: circularProgress(),);
-                  },
-                );
-              },
-            )
-            : Center(child: circularProgress(),);
+                    itemCount: snapshot.data.documents.length,
+                    itemBuilder: (c, index) {
+                      return FutureBuilder<QuerySnapshot>(
+                        future: EcommerceApp.firestore
+                            .collection(EcommerceApp.collectionUser)
+                            .document(EcommerceApp.sharedPreferences
+                                .getString(EcommerceApp.userUID))
+                            .collection(EcommerceApp.userCartList2)
+                            .where("productId",
+                                whereIn: snapshot.data.documents[index]
+                                    .data[EcommerceApp.productID])
+                            .getDocuments(),
+                        builder: (c, snap) {
+                          return snap.hasData
+                              ? OrderCard(
+                                  itemCount: snap.data.documents.length,
+                                  data: snap.data.documents,
+                                  orderID:
+                                      snapshot.data.documents[index].documentID,
+                                )
+                              : Center(
+                                  child: circularProgress(),
+                                );
+                        },
+                      );
+                    },
+                  )
+                : Center(
+                    child: circularProgress(),
+                  );
           },
+        ),
+        extendBody: true,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Route route = MaterialPageRoute(builder: (c) => Hamburger());
+            Navigator.push(context, route);
+          },
+          child: Icon(Icons.home),
+        ),
+        bottomNavigationBar: ClipRRect(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(45)),
+          child: BottomAppBar(
+            shape: CircularNotchedRectangle(),
+            child: Row(
+              children: [
+                Spacer(),
+                IconButton(
+                    icon: Icon(Icons.add_alert),
+                    color: Colors.white,
+                    onPressed: () {}),
+                Spacer(),
+                Spacer(),
+                IconButton(
+                    icon: Icon(Icons.turned_in),
+                    color: Colors.white,
+                    onPressed: () {}),
+                Spacer(),
+              ],
+            ),
+          ),
         ),
       ),
     );
