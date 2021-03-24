@@ -42,7 +42,7 @@ class _LoginState extends State<Login>
             SizedBox(height: 40,),
             Container(
               alignment: Alignment.bottomCenter,
-              child: Image.asset("images/chikenmaclogo.png",
+              child: Image.asset("images/icon/icon.png",
                 height: 200.0,
                 width: 200.0,
               ),

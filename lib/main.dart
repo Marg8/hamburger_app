@@ -257,7 +257,7 @@ class _SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                "images/chikenmaclogo.png",
+                "images/icon/icon.png",
                 height: 200.0,
                 width: 240.0,
               ),
@@ -265,7 +265,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 height: 20.0,
               ),
               Text(
-                "Chiken-Mac",
+                "Servicio de Comida",
                 style: TextStyle(
                     color: Colors.black,
                     fontSize: 20.0,
