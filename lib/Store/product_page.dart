@@ -123,7 +123,7 @@ class _InofrmacionProductoState extends State<InofrmacionProducto> {
             height: 3.0,
           ),
           Text(
-            r"$ " + widget.itemModel.cartPrice.toString() + ".0 MXN",
+            r"$ " + widget.itemModel.price.toString() + ".0 MXN",
             style: boldTextStyle,
           ),
           SizedBox(
@@ -283,7 +283,7 @@ class MultipleOptions extends StatelessWidget {
       "qtyitems": qty.toInt(),
       "productId": productId
     }).whenComplete(() {
-      checkItemInCart2(productId, context);
+      addItemToCart2(productId, context);
     });
   }
 }

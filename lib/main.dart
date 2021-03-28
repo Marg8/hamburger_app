@@ -30,7 +30,6 @@ Future<void> main() async {
 
   return runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => ProductoModel()),
-    
   ], child: MyApp()));
 }
 
@@ -67,13 +66,10 @@ class Hamburger extends StatefulWidget {
 }
 
 class _HamburgerState extends State<Hamburger> {
-  
   @override
   Widget build(BuildContext context) {
-   
     final newsService = Provider.of<NewsService>(context, listen: false);
     print(newsService.selectedCategory);
-    
 
     return Scaffold(
       body: CustomScrollView(
@@ -95,11 +91,11 @@ class _HamburgerState extends State<Hamburger> {
           Categories(),
           StreamBuilder<QuerySnapshot>(
               stream: Firestore.instance
-        .collection("items")
-        .limit(100)
-        .where("category", isEqualTo: newsService.selectedCategory)        
-        .snapshots(),
-              builder: (context,AsyncSnapshot<QuerySnapshot> dataSnapshot) {
+                  .collection("items")
+                  .limit(100)
+                  .where("category", isEqualTo: newsService.selectedCategory)
+                  .snapshots(),
+              builder: (context, AsyncSnapshot<QuerySnapshot> dataSnapshot) {
                 return !dataSnapshot.hasData
                     ? SliverToBoxAdapter(
                         child: Center(
@@ -138,13 +134,15 @@ class _HamburgerState extends State<Hamburger> {
               IconButton(
                   icon: Icon(Icons.add_alert),
                   color: Colors.white,
-                  onPressed: () {}),
+                  onPressed: () {
+                    _mostrarAlerta(context);
+                  }),
               Spacer(),
               Spacer(),
               IconButton(
                   icon: Icon(Icons.turned_in),
                   color: Colors.white,
-                  onPressed: () {}),
+                  onPressed: () {_mostrarAlerta(context);}),
               Spacer(),
             ],
           ),
@@ -153,7 +151,38 @@ class _HamburgerState extends State<Hamburger> {
       drawer: MyDrawer(),
     );
   }
+}
 
+void _mostrarAlerta(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (context) {
+      return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+          title: Text("Titulo"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text("Contenido de prueba de contenedor...."),
+              FlutterLogo(
+                size: 100.0,
+              )
+            ],
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Cancelar"),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            FlatButton(
+              child: Text("OK"),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ]);
+    },
+  );
 }
 
 class AgregadosCompras extends StatelessWidget {

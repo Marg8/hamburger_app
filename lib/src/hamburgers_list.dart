@@ -276,9 +276,7 @@ Widget sourceInfoBurger(ItemModel model, BuildContext context,
                                                         model.title,
                                                         model,
                                                         context);
-                                                    checkItemInCart2(
-                                                        model.productId,
-                                                        context);
+                                                    
                                                   },
                                                 )
                                               : IconButton(
@@ -355,13 +353,13 @@ checkProductIdinCart(String tittleAsId, ItemModel model, BuildContext context) {
       : saveItemInfoUserCart(tittleAsId, model, context);
 }
 
-checkItemInCart2(String productId, BuildContext context) {
-  EcommerceApp.sharedPreferences
-          .getStringList(EcommerceApp.userCartList)
-          .contains(productId.toString())
-      ? Fluttertoast.showToast(msg: "Articulo ya existe en Carrito.")
-      : addItemToCart2(productId, context);
-}
+// checkItemInCart2(String productId, BuildContext context) {
+//   EcommerceApp.sharedPreferences
+//           .getStringList(EcommerceApp.userCartList)
+//           .contains(productId.toString())
+//       ? Fluttertoast.showToast(msg: "Articulo ya existe en Carrito.")
+//       : addItemToCart2(productId, context);
+// }
 
 addItemToCart(String titleAsID, BuildContext context) {
   List temCartList =
@@ -423,7 +421,7 @@ saveItemInfoUserCart(String tittleAsId, ItemModel model, BuildContext context) {
     "qtyitems": model.qtyitems.toInt(),
     "productId": productId
   }).whenComplete(() {
-    checkItemInCart2(productId, context);
+    addItemToCart2(productId, context);
   });
 }
 

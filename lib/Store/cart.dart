@@ -209,6 +209,7 @@ class _CartPageState extends State<CartPage> {
   }
 
   deleteProduct(BuildContext context, String productId) {
+    
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
         .document(

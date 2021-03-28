@@ -1,14 +1,11 @@
-
 import 'package:app_hamburger/Config/config.dart';
 import 'package:app_hamburger/Models/address.dart';
 import 'package:app_hamburger/Widgets/customAppBar.dart';
 import 'package:app_hamburger/Widgets/myDrawer.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
-
-
-class AddAddress extends StatelessWidget
-{
+class AddAddress extends StatelessWidget {
   final formKey = GlobalKey<FormState>();
   final scaffoldKey = GlobalKey<ScaffoldMessengerState>();
   final cName = TextEditingController();
@@ -17,11 +14,12 @@ class AddAddress extends StatelessWidget
   final cCity = TextEditingController();
   final cState = TextEditingController();
   final cPinCode = TextEditingController();
+  
 
   @override
   Widget build(BuildContext context) {
-
-    final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+    final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+        GlobalKey<ScaffoldMessengerState>();
 
     return SafeArea(
       child: Scaffold(
@@ -29,36 +27,38 @@ class AddAddress extends StatelessWidget
         appBar: MyAppBar(),
         drawer: MyDrawer(),
         floatingActionButton: FloatingActionButton.extended(
-          onPressed: ()
-          {
-            if(formKey.currentState.validate())
-              {
-                final model = AddressModel(
-                  name: cName.text.trim(),
-                  state: cState.text.trim(),
-                  pincode: cPinCode.text,
-                  phoneNumber: cPhoneNumber.text,
-                  flatNumber: cFlatHomeNumber.text,
-                  city: cCity.text.trim(),
-                ).toJson();
+          onPressed: () {
+            if (formKey.currentState.validate()) {
+              final model = AddressModel(
+                name: cName.text.trim(),
+                state: cState.text.trim(),
+                pincode: cPinCode.text,
+                phoneNumber: cPhoneNumber.text,
+                flatNumber: cFlatHomeNumber.text,
+                city: cCity.text.trim(),
+                addressID: DateTime.now().millisecondsSinceEpoch.toString(),
+              ).toJson();
 
-                //add to firebase
-                EcommerceApp.firestore.collection(EcommerceApp.collectionUser)
-                .document(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-                .collection(EcommerceApp.subCollectionAddress)
-                .document(DateTime.now().millisecondsSinceEpoch.toString())
-                .setData(model)
-                .then((value) {
-                  final snack1 = ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Nueva Direccion Agregada Exitosamente.")));
-                  print(snack1);
-                  //No se necesita esta linea Cuando se implementa ScaffoldMessenger
-                  //scaffoldMessengerKey.currentState.showSnackBar(snack1);
-                  FocusScope.of(context).requestFocus(FocusNode());
-                  formKey.currentState.reset();
-                });
-
-
-              }
+              //add to firebase
+              EcommerceApp.firestore
+                  .collection(EcommerceApp.collectionUser)
+                  .document(EcommerceApp.sharedPreferences
+                      .getString(EcommerceApp.userUID))
+                  .collection(EcommerceApp.subCollectionAddress)
+                  .document(DateTime.now().millisecondsSinceEpoch.toString())
+                  .setData(model)
+                  .then((value) {
+                final snack1 = ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content:
+                            Text("Nueva Direccion Agregada Exitosamente.")));
+                print(snack1);
+                //No se necesita esta linea Cuando se implementa ScaffoldMessenger
+                //scaffoldMessengerKey.currentState.showSnackBar(snack1);
+                FocusScope.of(context).requestFocus(FocusNode());
+                formKey.currentState.reset();
+              });
+            }
           },
           label: Text("Listo"),
           backgroundColor: Colors.black,
@@ -73,7 +73,10 @@ class AddAddress extends StatelessWidget
                   padding: EdgeInsets.all(8.0),
                   child: Text(
                     "Agregar Direccion Para Entrega",
-                    style: TextStyle(color: Colors.black, fontSize: 20.0, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -129,7 +132,6 @@ class AddAddress extends StatelessWidget
                       height: 10.0,
                       color: Colors.black,
                     ),
-
                   ],
                 ),
               )
@@ -141,12 +143,15 @@ class AddAddress extends StatelessWidget
   }
 }
 
-class MyTextField extends StatelessWidget
-{
+class MyTextField extends StatelessWidget {
   final String hint;
   final TextEditingController controller;
 
-  MyTextField({Key key, this.hint, this.controller,}) : super (key: key);
+  MyTextField({
+    Key key,
+    this.hint,
+    this.controller,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -157,7 +162,17 @@ class MyTextField extends StatelessWidget
         decoration: InputDecoration.collapsed(hintText: hint),
         validator: (val) => val.isEmpty ? "No Puede Dejar Campos Vacios" : null,
       ),
-
     );
   }
+}
+
+deleteAddress(BuildContext context, String addressID) {
+  EcommerceApp.firestore
+      .collection(EcommerceApp.collectionUser)
+      .document(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+      .collection(EcommerceApp.subCollectionAddress)
+      .document(addressID)
+      .delete();
+
+  Fluttertoast.showToast(msg: "Direccion Borrada");
 }

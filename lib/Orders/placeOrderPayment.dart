@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:app_hamburger/Config/config.dart';
 import '../Config/config.dart';
 
+bool payment = true;
+
 class PaymentPage extends StatefulWidget {
   final String addressId;
   final double totalAmount;
@@ -40,23 +42,19 @@ class _PaymentPageState extends State<PaymentPage> {
         ),
         child: Center(
           child: Column(
-            
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextButton(
-                            
-                
                 onPressed: () => Null,
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Colors.orange
-                  ),
-                  
-                  child: Text(
-                    "Entrega a Domicilio",
-                    style: TextStyle(fontSize: 30.0,color: Colors.white),
-                  ),
+                      borderRadius: BorderRadius.circular(5),
+                      color: Colors.transparent),
+                  child: Text("Entrega a Domicilio",
+                      style: TextStyle(
+                          fontSize: 30.0,
+                          color: Colors.brown,
+                          fontWeight: FontWeight.bold)),
                 ),
               ),
               Padding(
@@ -67,21 +65,92 @@ class _PaymentPageState extends State<PaymentPage> {
                 height: 10.0,
               ),
               TextButton(
-                            
-                
-                onPressed: () => addOrderDetails(),
+                onPressed: () => Null,
                 child: Container(
+                  padding: EdgeInsets.all(5),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: Colors.orange
-                  ),
-                  
+                      borderRadius: BorderRadius.circular(5),
+                      color: Colors.transparent),
                   child: Text(
-                    "Confirmar Orden",
-                    style: TextStyle(fontSize: 30.0,color: Colors.white),
+                    "Seleccionar Forma de Pago",
+                    style: TextStyle(fontSize: 30.0, color: Colors.brown),
                   ),
                 ),
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    onPressed: () => addOrderDetails("Pago en Efectivo"),
+                    child: Container(
+                      padding: EdgeInsets.all(2),
+                      height: 30,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colors.orange),
+                      child: Text(
+                        "Pargar en Efectivo",
+                        style: TextStyle(fontSize: 20.0, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => addOrderDetails("Pago Electronico"),
+                    child: Container(
+                      padding: EdgeInsets.all(2),
+                      height: 30,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colors.orange),
+                      child: Text(
+                        "Pargar con Tarjeta",
+                        style: TextStyle(fontSize: 20.0, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    onPressed: () => addOrderDetails("Pago en Efectivo"),
+                    child: Container(
+                      padding: EdgeInsets.all(2),
+                      height: 100,
+                      width: 100,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colors.transparent),
+                      child: Icon(
+                        Icons.attach_money,
+                        color: Colors.brown,
+                        size: 100,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 50,
+                  ),
+                  TextButton(
+                    onPressed: () =>addOrderDetails("Pago Electronico"),
+                    child: Container(
+                      padding: EdgeInsets.all(2),
+                      height: 100,
+                      width: 100,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colors.transparent),
+                      child: Icon(
+                        Icons.credit_card_rounded,
+                        color: Colors.brown,
+                        size: 100,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              
             ],
           ),
         ),
@@ -89,7 +158,7 @@ class _PaymentPageState extends State<PaymentPage> {
     );
   }
 
-  addOrderDetails() {
+  addOrderDetails(String paymentMethod) {
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
         .document(
@@ -103,7 +172,7 @@ class _PaymentPageState extends State<PaymentPage> {
       "orderBy": EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID),
       EcommerceApp.productID: EcommerceApp.sharedPreferences
           .getStringList(EcommerceApp.userCartListID),
-      EcommerceApp.paymentDetails: "Pago en efectivo",
+      EcommerceApp.paymentDetails: paymentMethod,
       EcommerceApp.orderTime: DateTime.now().millisecondsSinceEpoch.toString(),
       EcommerceApp.isSuccess: true,
     });
@@ -189,6 +258,15 @@ class _PaymentPageState extends State<PaymentPage> {
             EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID) +
                 data['orderTime'])
         .setData(data);
+  }
+
+  paymentDetails(String payment) {
+    
+    
+    setState(() {
+      return payment;
+    });
+    print(payment);
   }
 }
 

@@ -93,7 +93,7 @@ class _UploadPageState extends State<UploadPage> with AutomaticKeepAliveClientMi
       body: CustomScrollView(          
           slivers: [     
                    
-            SliverPersistentHeader(pinned: true, delegate: SearchBoxDelegate()),
+            SliverPersistentHeader(pinned: true, delegate: SearchBoxDelegateAdmin()),
             StreamBuilder<QuerySnapshot>(
                 stream: Firestore.instance
                     .collection("items")
