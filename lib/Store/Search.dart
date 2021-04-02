@@ -36,10 +36,10 @@ class _SearchProductState extends State<SearchProduct>
           {
             return snap.hasData
                 ? ListView.builder(
-                itemCount: snap.data.documents.length,
+                itemCount: snap.data.docs.length,
                 itemBuilder: (context, index)
             {
-              ItemModel model = ItemModel.fromJson(snap.data.documents[index].data);
+              ItemModel model = ItemModel.fromJson(snap.data.docs[index].data());
 
               return sourceInfo(model, context);
             },
@@ -131,10 +131,13 @@ class _SearchProductState extends State<SearchProduct>
   
   Future startSearching(String query)
   {
-         docList = Firestore.instance.collection("items")
+         docList = FirebaseFirestore.instance.collection("items")
         .where("title", isGreaterThanOrEqualTo: query)
-        .getDocuments();
-
+        .get().then((QuerySnapshot querySnapshot) {
+        querySnapshot.docs.forEach((doc) {
+            print(doc["first_name"]);
+        });
+    });
         return docList;
   }
 }
@@ -162,10 +165,10 @@ class _SearchProductAdminState extends State<SearchProductAdmin>
           {
             return snap.hasData
                 ? ListView.builder(
-                itemCount: snap.data.documents.length,
+                itemCount: snap.data.docs.length,
                 itemBuilder: (context, index)
             {
-              ItemModel model = ItemModel.fromJson(snap.data.documents[index].data);
+              ItemModel model = ItemModel.fromJson(snap.data.docs[index].data());
 
               return sourceInfoAdmin(model, context);
             },
@@ -230,9 +233,13 @@ class _SearchProductAdminState extends State<SearchProductAdmin>
   
   Future startSearching(String query)
   {
-         docList = Firestore.instance.collection("items")
+         docList = FirebaseFirestore.instance.collection("items")
         .where("title", isGreaterThanOrEqualTo: query)
-        .getDocuments();
+        .get().then((QuerySnapshot querySnapshot) {
+        querySnapshot.docs.forEach((doc) {
+            print(doc["first_name"]);
+        });
+    });
 
         return docList;
   }

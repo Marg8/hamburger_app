@@ -6,13 +6,13 @@ class CartListOrder extends ChangeNotifier {
   Future getdata(List<int> cart) async {
     QuerySnapshot snap = await EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
-        .document(
+        .doc(
             EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
         .collection(EcommerceApp.userCartList)
-        .getDocuments();
+        .get();
 
-    snap.documents.forEach((document) {
-      final cart = document.documentID;
+    snap.docs.forEach((document) {
+      final cart = document.id;
       print(cart);
       return cart;
     });

@@ -77,7 +77,7 @@ class _CartPageState extends State<CartPage> {
           StreamBuilder<QuerySnapshot>(
               stream: EcommerceApp.firestore
                   .collection(EcommerceApp.collectionUser)
-                  .document(EcommerceApp.sharedPreferences
+                  .doc(EcommerceApp.sharedPreferences
                       .getString(EcommerceApp.userUID))
                   .collection(EcommerceApp.userCartList2)
                   .where("status", isEqualTo: "available")
@@ -89,14 +89,14 @@ class _CartPageState extends State<CartPage> {
                           child: circularProgress(),
                         ),
                       )
-                    : snapshot.data.documents.length == 0
+                    : snapshot.data.docs.length == 0
                         ? beginBuildingCart()
                         : SliverStaggeredGrid.countBuilder(
                             crossAxisCount: 1,
                             staggeredTileBuilder: (c) => StaggeredTile.fit(1),
                             itemBuilder: (context, index) {
                               ItemModel model = ItemModel.fromJson(
-                                  snapshot.data.documents[index].data);
+                                  snapshot.data.docs[index].data());
 
                               if (index == 0) {
                                 totalAmount = 0;
@@ -105,7 +105,7 @@ class _CartPageState extends State<CartPage> {
                                 totalAmount = model.cartPrice + totalAmount;
                               }
 
-                              if (snapshot.data.documents.length - 1 == index) {
+                              if (snapshot.data.docs.length - 1 == index) {
                                 WidgetsBinding.instance
                                     .addPostFrameCallback((c) {
                                   Provider.of<TotalAmount>(context,
@@ -121,7 +121,7 @@ class _CartPageState extends State<CartPage> {
                               });
                             },
                             itemCount: snapshot.hasData
-                                ? snapshot.data.documents.length
+                                ? snapshot.data.docs.length
                                 : 0,
                           );
               }),
@@ -163,9 +163,9 @@ class _CartPageState extends State<CartPage> {
 
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
-        .document(
+        .doc(
             EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-        .updateData({
+        .update({
       EcommerceApp.userCartList: temCartList,
     }).then((v) {
       Fluttertoast.showToast(msg: "Item RemovedSuccessfully.");
@@ -189,9 +189,9 @@ class _CartPageState extends State<CartPage> {
 
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
-        .document(
+        .doc(
             EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-        .updateData({
+        .update({
       EcommerceApp.userCartListID: temCartList,
     }).then((v) {
       Fluttertoast.showToast(msg: "Item RemovedSuccessfully.");
@@ -212,10 +212,10 @@ class _CartPageState extends State<CartPage> {
     
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
-        .document(
+        .doc(
             EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
         .collection(EcommerceApp.userCartList2)
-        .document(productId)
+        .doc(productId)
         .delete();
 
     Fluttertoast.showToast(msg: "Producto Borrado de Carro");

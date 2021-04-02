@@ -31,15 +31,15 @@ class OrderDetails extends StatelessWidget {
           child: FutureBuilder<DocumentSnapshot>(
             future: EcommerceApp.firestore
                 .collection(EcommerceApp.collectionUser)
-                .document(EcommerceApp.sharedPreferences
+                .doc(EcommerceApp.sharedPreferences
                     .getString(EcommerceApp.userUID))
                 .collection(EcommerceApp.collectionOrders)
-                .document(orderID)
+                .doc(orderID)
                 .get(),
             builder: (c, snapshot) {
               Map dataMap;
               if (snapshot.hasData) {
-                dataMap = snapshot.data.data;
+                dataMap = snapshot.data.data();
               }
               return snapshot.hasData
                   ? Container(
@@ -86,18 +86,18 @@ class OrderDetails extends StatelessWidget {
                         FutureBuilder<QuerySnapshot>(
                           future: EcommerceApp.firestore
                               .collection(EcommerceApp.collectionUser)
-                              .document(EcommerceApp.sharedPreferences
+                              .doc(EcommerceApp.sharedPreferences
                                   .getString(EcommerceApp.userUID))
                               .collection(EcommerceApp.userCartList2)
                               .where("productId",
                                   whereIn: dataMap[EcommerceApp.productID])
-                              .getDocuments(),
+                              .get(),
                           builder: (c, dataSnapshot) {
                             return dataSnapshot.hasData
                                 ? OrderCard2(
                                     itemCount:
-                                        dataSnapshot.data.documents.length,
-                                    data: dataSnapshot.data.documents,
+                                        dataSnapshot.data.docs.length,
+                                    data: dataSnapshot.data.docs,
                                   )
                                 : Center(
                                     child: circularProgress(),
@@ -110,16 +110,16 @@ class OrderDetails extends StatelessWidget {
                         FutureBuilder<DocumentSnapshot>(
                             future: EcommerceApp.firestore
                                 .collection(EcommerceApp.collectionUser)
-                                .document(EcommerceApp.sharedPreferences
+                                .doc(EcommerceApp.sharedPreferences
                                     .getString(EcommerceApp.userUID))
                                 .collection(EcommerceApp.subCollectionAddress)
-                                .document(dataMap[EcommerceApp.addressID])
+                                .doc(dataMap[EcommerceApp.addressID])
                                 .get(),
                             builder: (c, snap) {
                               return snap.hasData
                                   ? ShippingDetails(
                                       model:
-                                          AddressModel.fromJson(snap.data.data),
+                                          AddressModel.fromJson(snap.data.data()),
                                     )
                                   : Center(
                                       child: circularProgress(),
@@ -311,10 +311,10 @@ class ShippingDetails extends StatelessWidget {
   confirmedUserOrderReceived(BuildContext context, String mOrderId) {
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
-        .document(
+        .doc(
             EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
         .collection(EcommerceApp.collectionOrders)
-        .document(mOrderId)
+        .doc(mOrderId)
         .delete();
 
     getOrderId = "";

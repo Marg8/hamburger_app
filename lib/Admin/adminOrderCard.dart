@@ -56,7 +56,7 @@ class AdminOrderCard extends StatelessWidget
           itemBuilder: (c, index)
         {
           
-          ItemModel model = ItemModel.fromJson(data[index].data);
+          ItemModel model = ItemModel.fromJson(data[index].data());
           return sourceOrderInfo2(model, context);
           
         },

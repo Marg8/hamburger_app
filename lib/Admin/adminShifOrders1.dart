@@ -44,30 +44,30 @@ class _AdminShiftOrders1State extends State<AdminShiftOrders1> {
           ],
         ),
         body: StreamBuilder<QuerySnapshot>(
-          stream: Firestore.instance.collection("orders").snapshots(),
+          stream: FirebaseFirestore.instance.collection("orders").snapshots(),
 
           builder: (c, snapshot)
           {
             return snapshot.hasData
                 ? ListView.builder(
-              itemCount: snapshot.data.documents.length,
+              itemCount: snapshot.data.docs.length,
               padding: const EdgeInsets.only( top: 20.0),
               itemBuilder: (c, index){
                 
                 return FutureBuilder<QuerySnapshot>(
-                  future: Firestore.instance.collection("items")
-                      .where("title", whereIn: snapshot.data.documents[index].data[EcommerceApp.productID])
-                      .getDocuments(),
+                  future: FirebaseFirestore.instance.collection("items")
+                      .where("title", whereIn: snapshot.data.docs[index].data()[EcommerceApp.productID])
+                      .get(),
 
                   builder: (c, snaps)
                   {
                     return snaps.hasData
                         ? AdminOrderCard(
-                      itemCount: snaps.data.documents.length,
-                      data: snaps.data.documents,
-                      orderID: snapshot.data.documents[index].documentID,
-                      orderBy: snapshot.data.documents[index].data["orderBy"],
-                      addressID: snapshot.data.documents[index].data["addressID"],
+                      itemCount: snaps.data.docs.length,
+                      data: snaps.data.docs,
+                      orderID: snapshot.data.docs[index].id,
+                      orderBy: snapshot.data.docs[index].data()["orderBy"],
+                      addressID: snapshot.data.docs[index].data()["addressID"],
                     )
                         :Center(child: circularProgress(),);
                   },

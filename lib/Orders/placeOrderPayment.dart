@@ -161,10 +161,10 @@ class _PaymentPageState extends State<PaymentPage> {
   addOrderDetails(String paymentMethod) {
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
-        .document(
+        .doc(
             EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
         .collection(EcommerceApp.userCartList2)
-        .getDocuments();
+        .get();
 
     writeOrderDetailsForUser({
       EcommerceApp.addressID: widget.addressId,
@@ -199,11 +199,11 @@ class _PaymentPageState extends State<PaymentPage> {
     List tempList =
         EcommerceApp.sharedPreferences.getStringList(EcommerceApp.userCartList);
 
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection("users")
-        .document(
+        .doc(
             EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-        .updateData({
+        .update({
       EcommerceApp.userCartList: tempList,
     }).then((value) {
       EcommerceApp.sharedPreferences
@@ -222,11 +222,11 @@ class _PaymentPageState extends State<PaymentPage> {
     List tempList = EcommerceApp.sharedPreferences
         .getStringList(EcommerceApp.userCartListID);
 
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection("users")
-        .document(
+        .doc(
             EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-        .updateData({
+        .update({
       EcommerceApp.userCartListID: tempList,
     }).then((value) {
       EcommerceApp.sharedPreferences
@@ -242,22 +242,22 @@ class _PaymentPageState extends State<PaymentPage> {
   Future writeOrderDetailsForUser(Map<String, dynamic> data) async {
     await EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
-        .document(
+        .doc(
             EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
         .collection(EcommerceApp.collectionOrders)
-        .document(
+        .doc(
             EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID) +
                 data['orderTime'])
-        .setData(data);
+        .set(data);
   }
 
   Future writeOrderDetailsForAdmin(Map<String, dynamic> data) async {
     await EcommerceApp.firestore
         .collection(EcommerceApp.collectionOrders)
-        .document(
+        .doc(
             EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID) +
                 data['orderTime'])
-        .setData(data);
+        .set(data);
   }
 
   paymentDetails(String payment) {
@@ -290,14 +290,14 @@ Future cartDataOrder(List cart) async {
 
   EcommerceApp.firestore
       .collection(EcommerceApp.collectionUser)
-      .document(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+      .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
       .collection(EcommerceApp.userCartList2)
-      .getDocuments()
+      .get()
       .then((querySnapshot) {
-    querySnapshot.documents.forEach((productId) {
+    querySnapshot.docs.forEach((productId) {
       try {
-        if (cart.contains(productId.documentID.toString())) {
-          batch.updateData(productId.reference, {"status": "Order"});
+        if (cart.contains(productId.id.toString())) {
+          batch.update(productId.reference, {"status": "Order"});
         }
       } on FormatException catch (error) {
         print("The document ${error.source} could not be parsed.");

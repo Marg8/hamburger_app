@@ -42,11 +42,11 @@ class AddAddress extends StatelessWidget {
               //add to firebase
               EcommerceApp.firestore
                   .collection(EcommerceApp.collectionUser)
-                  .document(EcommerceApp.sharedPreferences
+                  .doc(EcommerceApp.sharedPreferences
                       .getString(EcommerceApp.userUID))
                   .collection(EcommerceApp.subCollectionAddress)
-                  .document(DateTime.now().millisecondsSinceEpoch.toString())
-                  .setData(model)
+                  .doc(DateTime.now().millisecondsSinceEpoch.toString())
+                  .set(model)
                   .then((value) {
                 final snack1 = ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -169,9 +169,9 @@ class MyTextField extends StatelessWidget {
 deleteAddress(BuildContext context, String addressID) {
   EcommerceApp.firestore
       .collection(EcommerceApp.collectionUser)
-      .document(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+      .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
       .collection(EcommerceApp.subCollectionAddress)
-      .document(addressID)
+      .doc(addressID)
       .delete();
 
   Fluttertoast.showToast(msg: "Direccion Borrada");

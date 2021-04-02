@@ -1,10 +1,12 @@
+import 'dart:convert';
+
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app_hamburger/Config/config.dart';
 import 'package:app_hamburger/Store/product_page.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import '../Counters/cartitemcounter.dart';
 import '../Widgets/loadingWidget.dart';
@@ -113,12 +115,14 @@ class _StoreHomeState extends State<StoreHome> {
           slivers: [
             SliverPersistentHeader(pinned: true, delegate: SearchBoxDelegate()),
             StreamBuilder<QuerySnapshot>(
-                stream: Firestore.instance
+                stream: FirebaseFirestore.instance
                     .collection("items")
                     .limit(100)
                     .orderBy("publishedDate", descending: true)
                     .snapshots(),
                 builder: (context, dataSnapshot) {
+
+                  
                   return !dataSnapshot.hasData
                       ? SliverToBoxAdapter(
                           child: Center(
@@ -129,11 +133,13 @@ class _StoreHomeState extends State<StoreHome> {
                           crossAxisCount: 2,
                           staggeredTileBuilder: (c) => StaggeredTile.fit(1),
                           itemBuilder: (context, index) {
-                            ItemModel model = ItemModel.fromJson(
-                                dataSnapshot.data.documents[index].data);
+                      
+                            ItemModel model  =
+                            ItemModel.fromJson(dataSnapshot.data.docs[index].data());
+
                             return sourceInfo(model, context);
                           },
-                          itemCount: dataSnapshot.data.documents.length,
+                          itemCount: dataSnapshot.data.docs.length,
                         );
                 }),
           ],
@@ -643,6 +649,3 @@ Widget card({Color primaryColor = Colors.redAccent, String imgPath}) {
     ),
   );
 }
-
-
-

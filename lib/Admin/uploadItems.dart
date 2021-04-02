@@ -95,7 +95,7 @@ class _UploadPageState extends State<UploadPage> with AutomaticKeepAliveClientMi
                    
             SliverPersistentHeader(pinned: true, delegate: SearchBoxDelegateAdmin()),
             StreamBuilder<QuerySnapshot>(
-                stream: Firestore.instance
+                stream: FirebaseFirestore.instance
                     .collection("items")
                     .limit(50)
                     .orderBy("publishedDate", descending: true)
@@ -112,11 +112,11 @@ class _UploadPageState extends State<UploadPage> with AutomaticKeepAliveClientMi
                           staggeredTileBuilder: (c) => StaggeredTile.fit(1),
                           itemBuilder: (context, index) {
                             ItemModel model = ItemModel.fromJson(
-                                dataSnapshot.data.documents[index].data);         
+                                dataSnapshot.data.docs[index].data());         
                               
                           return sourceInfoAdmin(model, context);
                           },
-                          itemCount: dataSnapshot.data.documents.length,
+                          itemCount: dataSnapshot.data.docs.length,
                         );
                 }),
 
@@ -460,16 +460,16 @@ class _UploadPageState extends State<UploadPage> with AutomaticKeepAliveClientMi
   }
   Future<String> uploadItemImage(mFileImage) async
   {
-    final StorageReference storageReference =  FirebaseStorage.instance.ref().child("Items");
-    StorageUploadTask uploadTask = storageReference.child("Product_$productId.jpg").putFile(mFileImage);
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    final Reference storageReference =  FirebaseStorage.instance.ref().child("Items");
+    UploadTask uploadTask = storageReference.child("Product_$productId.jpg").putFile(mFileImage);
+    TaskSnapshot taskSnapshot = await uploadTask;
     String downloadUrl = await taskSnapshot.ref.getDownloadURL();
     return downloadUrl;
   }
   saveItemInfo(String downloadUrl)
   {
-    final itemsRef = Firestore.instance.collection("items");
-    itemsRef.document(productId).setData({
+    final itemsRef = FirebaseFirestore.instance.collection("items");
+    itemsRef.doc(productId).set({
       "shortInfo": _shortInfoTextEditingController.text.trim(),
       "longDescription": _descriptionTextEditingController.text.trim(),
       "price": int.parse(_priceTextEditingController.text),

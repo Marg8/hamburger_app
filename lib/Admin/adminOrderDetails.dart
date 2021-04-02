@@ -30,14 +30,14 @@ class AdminOrderDetails extends StatelessWidget
           child: FutureBuilder<DocumentSnapshot>(
             future: EcommerceApp.firestore
             .collection(EcommerceApp.collectionOrders)
-            .document(getOrderId)
+            .doc(getOrderId)
             .get(),
             builder: (c, snapshot)
             {
               Map dataMap;
               if(snapshot.hasData)
               {
-                dataMap = snapshot.data.data;
+                dataMap = snapshot.data.data();
               }
               return snapshot.hasData
                   ? Container(
@@ -71,13 +71,13 @@ class AdminOrderDetails extends StatelessWidget
                         future: EcommerceApp.firestore
                             .collection("items")
                             .where("title",whereIn: dataMap[EcommerceApp.productID])
-                            .getDocuments(),
+                            .get(),
                         builder: (c, dataSnapshot)
                         {
                           return dataSnapshot.hasData
                               ? OrderCard(
-                            itemCount: dataSnapshot.data.documents.length,
-                            data: dataSnapshot.data.documents,
+                            itemCount: dataSnapshot.data.docs.length,
+                            data: dataSnapshot.data.docs,
                           )
                               : Center(child: circularProgress(),);
                         },
@@ -86,14 +86,14 @@ class AdminOrderDetails extends StatelessWidget
                       FutureBuilder<DocumentSnapshot>(
                           future: EcommerceApp.firestore
                               .collection(EcommerceApp.collectionUser)
-                              .document(orderBy)
+                              .doc(orderBy)
                               .collection(EcommerceApp.subCollectionAddress)
-                              .document(addressID)
+                              .doc(addressID)
                               .get(),
                           builder: (c, snap)
                           {
                             return snap.hasData
-                                ? AdminShippingDetails(model: AddressModel.fromJson(snap.data.data),)
+                                ? AdminShippingDetails(model: AddressModel.fromJson(snap.data.data()),)
                                 : Center(child: circularProgress(),);
                           }
 
@@ -290,7 +290,7 @@ class AdminShippingDetails extends StatelessWidget
   {
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionOrders)
-        .document(mOrderId)
+        .doc(mOrderId)
         .delete();
 
     getOrderId = "";

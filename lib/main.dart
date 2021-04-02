@@ -26,7 +26,7 @@ Future<void> main() async {
 
   EcommerceApp.auth = FirebaseAuth.instance;
   EcommerceApp.sharedPreferences = await SharedPreferences.getInstance();
-  EcommerceApp.firestore = Firestore.instance;
+  EcommerceApp.firestore = FirebaseFirestore.instance;
 
   return runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => ProductoModel()),
@@ -90,7 +90,7 @@ class _HamburgerState extends State<Hamburger> {
           Header(),
           Categories(),
           StreamBuilder<QuerySnapshot>(
-              stream: Firestore.instance
+              stream: FirebaseFirestore.instance
                   .collection("items")
                   .limit(100)
                   .where("category", isEqualTo: newsService.selectedCategory)
@@ -110,10 +110,10 @@ class _HamburgerState extends State<Hamburger> {
                               scrollDirection: Axis.horizontal,
                               itemBuilder: (context, index) {
                                 ItemModel model = ItemModel.fromJson(
-                                    dataSnapshot.data.documents[index].data);
+                                    dataSnapshot.data.docs[index].data());
                                 return sourceInfoBurger(model, context);
                               },
-                              itemCount: dataSnapshot.data.documents.length,
+                              itemCount: dataSnapshot.data.docs.length,
                             )));
               }),
         ],
@@ -258,7 +258,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   displaySplash() {
     Timer(Duration(seconds: 3), () async {
-      if (await EcommerceApp.auth.currentUser() != null) {
+      if (await EcommerceApp.auth.currentUser != null) {
         Route route = MaterialPageRoute(builder: (_) => Hamburger());
         Navigator.push(context, route);
       } else {

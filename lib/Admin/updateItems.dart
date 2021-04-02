@@ -264,7 +264,7 @@ class _UpdatePageState extends State<UpdatePage> with AutomaticKeepAliveClientMi
     
     EcommerceApp.firestore
         .collection("items")
-        .document(productId)
+        .doc(productId)
         .delete();
 
     productId = "";
@@ -332,9 +332,9 @@ class _UpdatePageState extends State<UpdatePage> with AutomaticKeepAliveClientMi
           MaterialPageRoute(builder: (c) => UploadPage());
           Navigator.pop(context, route);
 
-        final itemsRef = Firestore.instance.collection("items");
+        final itemsRef = FirebaseFirestore.instance.collection("items");
     
-        itemsRef.document(productId.toString()).updateData({
+        itemsRef.doc(productId.toString()).update({
           "shortInfo": _shortInfoTextEditingController.text.trim(),
           "longDescription": _descriptionTextEditingController.text.trim(),
           "price": int.parse(_priceTextEditingController.text),

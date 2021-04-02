@@ -368,8 +368,8 @@ addItemToCart(String titleAsID, BuildContext context) {
 
   EcommerceApp.firestore
       .collection(EcommerceApp.collectionUser)
-      .document(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-      .updateData({
+      .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+      .update({
     EcommerceApp.userCartList: temCartList,
   }).then((v) {
     Fluttertoast.showToast(msg: "Agregado con exito.");
@@ -388,8 +388,8 @@ addItemToCart2(String productId, BuildContext context) {
 
   EcommerceApp.firestore
       .collection(EcommerceApp.collectionUser)
-      .document(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-      .updateData({
+      .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+      .update({
     EcommerceApp.userCartListID: temCartList,
   }).then((v) {
     Fluttertoast.showToast(msg: "Agregado con exito.");
@@ -406,10 +406,10 @@ saveItemInfoUserCart(String tittleAsId, ItemModel model, BuildContext context) {
 
   EcommerceApp.firestore
       .collection(EcommerceApp.collectionUser)
-      .document(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+      .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
       .collection(EcommerceApp.userCartList2)
-      .document(productId)
-      .setData({
+      .doc(productId)
+      .set({
     "shortInfo": model.shortInfo.toString(),
     "longDescription": model.longDescription.toString(),
     "price": model.price.toInt(),
@@ -524,11 +524,11 @@ class _CantidadProductoState extends State<CantidadProducto> {
 
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
-        .document(
+        .doc(
             EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
         .collection(EcommerceApp.userCartList2)
-        .document(widget.model.productId.toString())
-        .updateData({
+        .doc(widget.model.productId.toString())
+        .update({
       "price": widget.model.price.toInt(),
       "cartPrice": widget.model.price.toInt() * widget.model.qtyitems.toInt(),
       "qtyitems": widget.model.qtyitems.toInt(),
@@ -540,11 +540,11 @@ class _CantidadProductoState extends State<CantidadProducto> {
 
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
-        .document(
+        .doc(
             EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
         .collection(EcommerceApp.userCartList2)
-        .document(widget.model.productId.toString())
-        .updateData({
+        .doc(widget.model.productId.toString())
+        .update({
       "price": widget.model.price.toInt(),
       "cartPrice": widget.model.price.toInt() * widget.model.qtyitems.toInt(),
       "qtyitems": widget.model.qtyitems.toInt(),

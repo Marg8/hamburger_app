@@ -148,19 +148,19 @@ class _AdminSignInScreenState extends State<AdminSignInScreen>
 
   loginAdmin()
   {
-    Firestore.instance.collection("admins").getDocuments().then((snapshot){
-      snapshot.documents.forEach((result){
-        if(result.data["id"] != _adminIDTextEditingController.text.trim())
+    FirebaseFirestore.instance.collection("admins").get().then((snapshot){
+      snapshot.docs.forEach((result){
+        if(result.data()["id"] != _adminIDTextEditingController.text.trim())
           {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("your id is not correct."),));
           }
-        else if(result.data["password"] != _passwordTextEditingController.text.trim())
+        else if(result.data()["password"] != _passwordTextEditingController.text.trim())
         {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("your password is not correct."),));
         }
         else
           {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Welcome Big Boss." + result.data["name"]),));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Welcome Big Boss." + result.data()["name"]),));
 
             setState(() {
               _adminIDTextEditingController.text = "";

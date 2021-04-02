@@ -238,9 +238,9 @@ class MultipleOptions extends StatelessWidget {
 
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
-        .document(
+        .doc(
             EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-        .updateData({
+        .update({
       EcommerceApp.userCartList: temCartList,
     }).then((v) {
       Fluttertoast.showToast(msg: "Agregado con exito.");
@@ -267,11 +267,11 @@ class MultipleOptions extends StatelessWidget {
     int qty = 1;
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
-        .document(
+        .doc(
             EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
         .collection(EcommerceApp.userCartList2)
-        .document(productId)
-        .setData({
+        .doc(productId)
+        .set({
       "shortInfo": model.shortInfo.toString(),
       "longDescription": model.longDescription.toString(),
       "price": model.price.toInt(),
