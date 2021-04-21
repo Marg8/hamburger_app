@@ -118,6 +118,7 @@ class _CartPageState extends State<CartPage> {
                                 removeItemFromUserCart(model.title);
                                 deleteProduct(context, model.productId);
                                 removeItemFromUserCartID(model.productId);
+                                deleteUserOrderProduct(context, model.productId);
                               });
                             },
                             itemCount: snapshot.hasData
@@ -163,8 +164,7 @@ class _CartPageState extends State<CartPage> {
 
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
-        .doc(
-            EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
         .update({
       EcommerceApp.userCartList: temCartList,
     }).then((v) {
@@ -189,8 +189,7 @@ class _CartPageState extends State<CartPage> {
 
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
-        .doc(
-            EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
         .update({
       EcommerceApp.userCartListID: temCartList,
     }).then((v) {
@@ -209,12 +208,19 @@ class _CartPageState extends State<CartPage> {
   }
 
   deleteProduct(BuildContext context, String productId) {
-    
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
-        .doc(
-            EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
         .collection(EcommerceApp.userCartList2)
+        .doc(productId)
+        .delete();
+
+    Fluttertoast.showToast(msg: "Producto Borrado de Carro");
+  }
+
+  deleteUserOrderProduct(BuildContext context, String productId) {
+    EcommerceApp.firestore
+        .collection("users_carts_orders")
         .doc(productId)
         .delete();
 

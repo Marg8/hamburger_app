@@ -25,4 +25,5 @@ class CartItemCounter extends ChangeNotifier {
       notifyListeners();
     });
   }
+  
 }

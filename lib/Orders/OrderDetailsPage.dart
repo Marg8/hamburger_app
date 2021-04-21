@@ -67,7 +67,7 @@ class OrderDetails extends StatelessWidget {
                         ),
                         Padding(
                           padding: EdgeInsets.all(4.0),
-                          child: Text("Order ID:" + getOrderId),
+                          child: Text("Order Number: #" + dataMap["orderNumber"].toString()),
                         ),
                         Padding(
                           padding: EdgeInsets.all(4.0),

@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:app_hamburger/Counters/orderNumberProvider.dart';
 import 'package:app_hamburger/Authentication/authenication.dart';
 import 'package:app_hamburger/Config/config.dart';
 import 'package:app_hamburger/Counters/ItemQuantity.dart';
@@ -17,16 +17,19 @@ import 'package:app_hamburger/src/hamburgers_list.dart';
 import 'package:app_hamburger/src/header.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await Firebase.initializeApp();
   EcommerceApp.auth = FirebaseAuth.instance;
   EcommerceApp.sharedPreferences = await SharedPreferences.getInstance();
   EcommerceApp.firestore = FirebaseFirestore.instance;
+ 
+  
 
   return runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => ProductoModel()),
@@ -44,6 +47,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (c) => ItemQuantity()),
         ChangeNotifierProvider(create: (c) => AddressChanger()),
         ChangeNotifierProvider(create: (c) => TotalAmount()),
+        ChangeNotifierProvider(create: (c) => OrderNumberNotifier()),
       ],
       child: MaterialApp(
         theme: ThemeData(
@@ -142,7 +146,9 @@ class _HamburgerState extends State<Hamburger> {
               IconButton(
                   icon: Icon(Icons.turned_in),
                   color: Colors.white,
-                  onPressed: () {_mostrarAlerta(context);}),
+                  onPressed: () {
+                    _mostrarAlerta(context);
+                  }),
               Spacer(),
             ],
           ),
@@ -172,11 +178,11 @@ void _mostrarAlerta(BuildContext context) {
             ],
           ),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: Text("Cancelar"),
               onPressed: () => Navigator.of(context).pop(),
             ),
-            FlatButton(
+            TextButton(
               child: Text("OK"),
               onPressed: () => Navigator.of(context).pop(),
             ),
@@ -257,13 +263,13 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   displaySplash() {
-    Timer(Duration(seconds: 3), () async {
-      if (await EcommerceApp.auth.currentUser != null) {
+   Timer(Duration(seconds: 3), () async {
+      if ( EcommerceApp.auth.currentUser != null) {
         Route route = MaterialPageRoute(builder: (_) => Hamburger());
-        Navigator.push(context, route);
+        Navigator.pushReplacement(context, route);
       } else {
         Route route = MaterialPageRoute(builder: (_) => AuthenticScreen());
-        Navigator.push(context, route);
+        Navigator.pushReplacement(context, route);
       }
     });
   }

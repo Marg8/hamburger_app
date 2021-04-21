@@ -1,4 +1,5 @@
 import 'package:app_hamburger/Address/address.dart';
+import 'package:app_hamburger/Admin/adminOrderCard.dart';
 import 'package:app_hamburger/Admin/uploadItems.dart';
 import 'package:app_hamburger/Config/config.dart';
 import 'package:app_hamburger/Models/address.dart';
@@ -57,7 +58,7 @@ class AdminOrderDetails extends StatelessWidget
                       ),
                       Padding(
                         padding: EdgeInsets.all(4.0),
-                        child: Text("Order ID:" + getOrderId),
+                        child: Text("Order Number: #" + dataMap["orderNumber"].toString()),
                       ),
                       Padding(
                         padding: EdgeInsets.all(4.0),
@@ -67,10 +68,11 @@ class AdminOrderDetails extends StatelessWidget
                         ),
                       ),
                       Divider(height: 2.0,),
+                       
                       FutureBuilder<QuerySnapshot>(
                         future: EcommerceApp.firestore
-                            .collection("items")
-                            .where("title",whereIn: dataMap[EcommerceApp.productID])
+                  .collection("users_carts_orders")
+                            .where("productId",whereIn: dataMap[EcommerceApp.productID])
                             .get(),
                         builder: (c, dataSnapshot)
                         {
@@ -138,40 +140,46 @@ class AdminStatusBanner extends StatelessWidget
         ),
       ),
       height: 40.0,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          GestureDetector(
-            onTap: ()
-            {
-              Route route = MaterialPageRoute(builder: (c) => StoreHome());
-              Navigator.push(context, route);
-            },
-            child: Container(
-              child: Icon(
-                Icons.arrow_drop_down_circle,
-                color: Colors.black,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 15),
+        child: Row(        
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            GestureDetector(
+              onTap: ()
+              {
+                Route route = MaterialPageRoute(builder: (c) => UploadPage());
+                Navigator.pop(context, route);
+              },
+              child: Container(alignment: Alignment.centerRight,
+                child: Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                ),
               ),
             ),
-          ),
-          SizedBox(width: 20.0,),
-          Text(
-            "Order Shipped" + msg,
-            style: TextStyle(color: Colors.white),
-          ),
-          SizedBox(width: 5.0,),
-          CircleAvatar(
-            radius: 8.0,
-            backgroundColor: Colors.grey,
-            child: Center(
-              child: Icon(
-                iconData,
-                color: Colors.black,
-                size: 14.0,
+            Spacer(),
+            // SizedBox(width: 100.0,),
+            Text(
+              "Order Shipped" + msg,
+              style: TextStyle(color: Colors.white),
+            ),
+            SizedBox(width: 10.0,),
+            CircleAvatar(
+              radius: 8.0,
+              backgroundColor: Colors.grey,
+              child: Center(
+                child: Icon(
+                  iconData,
+                  color: Colors.black,
+                  size: 14.0,
+                ),
               ),
             ),
-          )
-        ],
+            SizedBox(width: 100,),
+
+          ],
+        ),
       ),
     );
   }

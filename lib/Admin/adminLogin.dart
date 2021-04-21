@@ -130,7 +130,7 @@ class _AdminSignInScreenState extends State<AdminSignInScreen>
             SizedBox(
               height: 10.0,
             ),
-            FlatButton.icon(
+            TextButton.icon(
               onPressed: () =>
                   Navigator.push(context, MaterialPageRoute(builder: (context) => AuthenticScreen())),
               icon: (Icon(Icons.nature_people, color: Colors.orange,)),

@@ -23,6 +23,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  get: ^4.0.0
   palette_generator: ^0.2.0
   cupertino_icons: ^0.1.2
   cloud_firestore: ^1.0.3

@@ -1,4 +1,6 @@
 import 'package:app_hamburger/Counters/cartitemcounter.dart';
+import 'package:app_hamburger/Counters/orderNumberProvider.dart';
+import 'package:app_hamburger/Models/item.dart';
 import 'package:app_hamburger/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +10,8 @@ import 'package:app_hamburger/Config/config.dart';
 import '../Config/config.dart';
 
 bool payment = true;
-
+ItemModel model;
+ 
 class PaymentPage extends StatefulWidget {
   final String addressId;
   final double totalAmount;
@@ -17,6 +20,7 @@ class PaymentPage extends StatefulWidget {
     Key key,
     this.addressId,
     this.totalAmount,
+    orderNumber,
   }) : super(key: key);
 
   @override
@@ -26,6 +30,8 @@ class PaymentPage extends StatefulWidget {
 class _PaymentPageState extends State<PaymentPage> {
   List cart =
       EcommerceApp.sharedPreferences.getStringList(EcommerceApp.userCartListID);
+
+  int orderNumber;
 
   @override
   Widget build(BuildContext context) {
@@ -41,128 +47,176 @@ class _PaymentPageState extends State<PaymentPage> {
           ),
         ),
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextButton(
-                onPressed: () => Null,
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.transparent),
-                  child: Text("Entrega a Domicilio",
-                      style: TextStyle(
-                          fontSize: 30.0,
-                          color: Colors.brown,
-                          fontWeight: FontWeight.bold)),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Image.asset("images/delvham.png"),
-              ),
-              SizedBox(
-                height: 10.0,
-              ),
-              TextButton(
-                onPressed: () => Null,
-                child: Container(
-                  padding: EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.transparent),
-                  child: Text(
-                    "Seleccionar Forma de Pago",
-                    style: TextStyle(fontSize: 30.0, color: Colors.brown),
-                  ),
-                ),
-              ),
-              Row(
+          child: Consumer<OrderNumberNotifier>(
+            builder: ((context, orderProvider, c) {
+              FirebaseFirestore.instance
+                  .collection("order_history")
+                  .get()
+                  .then((QuerySnapshot querySnapshot) {
+                querySnapshot.docs.forEach((doc) => querySnapshot.docs.length);
+
+                setState(() {
+                  final orderNumber = querySnapshot.docs.length;
+                  WidgetsBinding.instance.addPostFrameCallback((c) {
+                    Provider.of<OrderNumberNotifier>(context, listen: false)
+                        .display(orderNumber);
+                  });
+                });
+              });
+
+              return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   TextButton(
-                    onPressed: () => addOrderDetails("Pago en Efectivo"),
+                    onPressed: () => null,
                     child: Container(
-                      padding: EdgeInsets.all(2),
-                      height: 30,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          color: Colors.orange),
-                      child: Text(
-                        "Pargar en Efectivo",
-                        style: TextStyle(fontSize: 20.0, color: Colors.white),
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () => addOrderDetails("Pago Electronico"),
-                    child: Container(
-                      padding: EdgeInsets.all(2),
-                      height: 30,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          color: Colors.orange),
-                      child: Text(
-                        "Pargar con Tarjeta",
-                        style: TextStyle(fontSize: 20.0, color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                    onPressed: () => addOrderDetails("Pago en Efectivo"),
-                    child: Container(
-                      padding: EdgeInsets.all(2),
-                      height: 100,
-                      width: 100,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
                           color: Colors.transparent),
-                      child: Icon(
-                        Icons.attach_money,
-                        color: Colors.brown,
-                        size: 100,
-                      ),
+                      child: Text(
+                          "Entrega a Domicilio #${orderProvider.orderNumber.toInt() + 1}",
+                          style: TextStyle(
+                              fontSize: 30.0,
+                              color: Colors.brown,
+                              fontWeight: FontWeight.bold)),
                     ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Image.asset("images/delvham.png"),
                   ),
                   SizedBox(
-                    width: 50,
+                    height: 10.0,
                   ),
                   TextButton(
-                    onPressed: () =>addOrderDetails("Pago Electronico"),
+                    onPressed: () => Null,
                     child: Container(
-                      padding: EdgeInsets.all(2),
-                      height: 100,
-                      width: 100,
+                      padding: EdgeInsets.all(5),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
                           color: Colors.transparent),
-                      child: Icon(
-                        Icons.credit_card_rounded,
-                        color: Colors.brown,
-                        size: 100,
+                      child: Text(
+                        "Seleccionar Forma de Pago",
+                        style: TextStyle(fontSize: 30.0, color: Colors.brown),
                       ),
                     ),
                   ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          addOrderDetails(
+                              "Pago en Efectivo",
+                              "${orderProvider.orderNumber.toInt() + 1}/" +
+                                  EcommerceApp.sharedPreferences
+                                      .getString(EcommerceApp.userName),
+                              model);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(2),
+                          height: 30,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Colors.orange),
+                          child: Text(
+                            "Pargar en Efectivo",
+                            style:
+                                TextStyle(fontSize: 20.0, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          addOrderDetails(
+                              "Pago Electronico",
+                              "${orderProvider.orderNumber.toInt() + 1}/" +
+                                  EcommerceApp.sharedPreferences
+                                      .getString(EcommerceApp.userName),
+                              model);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(2),
+                          height: 30,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Colors.orange),
+                          child: Text(
+                            "Pargar con Tarjeta",
+                            style:
+                                TextStyle(fontSize: 20.0, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          addOrderDetails(
+                              "Pago en Efectivo",
+                              "${orderProvider.orderNumber.toInt() + 1}/" +
+                                  EcommerceApp.sharedPreferences
+                                      .getString(EcommerceApp.userName),
+                              model);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(2),
+                          height: 100,
+                          width: 100,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Colors.transparent),
+                          child: Icon(
+                            Icons.attach_money,
+                            color: Colors.brown,
+                            size: 100,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 50,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          addOrderDetails(
+                              "Pago Electronico",
+                              "${orderProvider.orderNumber.toInt() + 1}/" +
+                                  EcommerceApp.sharedPreferences
+                                      .getString(EcommerceApp.userName),
+                              model);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(2),
+                          height: 100,
+                          width: 100,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Colors.transparent),
+                          child: Icon(
+                            Icons.credit_card_rounded,
+                            color: Colors.brown,
+                            size: 100,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
-              ),
-              
-            ],
+              );
+            }),
           ),
         ),
       ),
     );
   }
 
-  addOrderDetails(String paymentMethod) {
+  addOrderDetails(String paymentMethod, orderNumberC, ItemModel model) {
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
-        .doc(
-            EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
         .collection(EcommerceApp.userCartList2)
         .get();
 
@@ -175,6 +229,7 @@ class _PaymentPageState extends State<PaymentPage> {
       EcommerceApp.paymentDetails: paymentMethod,
       EcommerceApp.orderTime: DateTime.now().millisecondsSinceEpoch.toString(),
       EcommerceApp.isSuccess: true,
+      "orderNumber": orderNumberC,
     });
 
     writeOrderDetailsForAdmin({
@@ -186,11 +241,27 @@ class _PaymentPageState extends State<PaymentPage> {
       EcommerceApp.paymentDetails: "Pago en efectivo",
       EcommerceApp.orderTime: DateTime.now().millisecondsSinceEpoch.toString(),
       EcommerceApp.isSuccess: true,
+      "orderNumber": orderNumberC,
     }).whenComplete(() => {
-          emptyCartNow(),
-          emptyCartNowID(),
+
           cartDataOrder(cart),
+          cartDataUsersOrders(cart),
+          emptyCartNowID(),
+          emptyCartNow(),
         });
+
+    writeOrderDetailsForAdminHistory({
+      EcommerceApp.addressID: widget.addressId,
+      EcommerceApp.totalAmount: widget.totalAmount,
+      "orderBy": EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID),
+      EcommerceApp.productID: EcommerceApp.sharedPreferences
+          .getStringList(EcommerceApp.userCartListID),
+      EcommerceApp.paymentDetails: "Pago en efectivo",
+      EcommerceApp.orderTime: DateTime.now().millisecondsSinceEpoch.toString(),
+      EcommerceApp.isSuccess: true,
+      "orderNumber": orderNumberC,
+    });
+
   }
 
   emptyCartNow() {
@@ -201,8 +272,7 @@ class _PaymentPageState extends State<PaymentPage> {
 
     FirebaseFirestore.instance
         .collection("users")
-        .doc(
-            EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
         .update({
       EcommerceApp.userCartList: tempList,
     }).then((value) {
@@ -224,8 +294,7 @@ class _PaymentPageState extends State<PaymentPage> {
 
     FirebaseFirestore.instance
         .collection("users")
-        .doc(
-            EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
         .update({
       EcommerceApp.userCartListID: tempList,
     }).then((value) {
@@ -242,27 +311,34 @@ class _PaymentPageState extends State<PaymentPage> {
   Future writeOrderDetailsForUser(Map<String, dynamic> data) async {
     await EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
-        .doc(
-            EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
         .collection(EcommerceApp.collectionOrders)
-        .doc(
-            EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID) +
-                data['orderTime'])
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID) +
+            data['orderTime'])
         .set(data);
   }
 
   Future writeOrderDetailsForAdmin(Map<String, dynamic> data) async {
     await EcommerceApp.firestore
         .collection(EcommerceApp.collectionOrders)
-        .doc(
-            EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID) +
-                data['orderTime'])
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID) +
+            data['orderTime'])
         .set(data);
   }
 
+  Future writeOrderDetailsForAdminHistory(Map<String, dynamic> data) async {
+    await EcommerceApp.firestore
+        .collection("order_history")
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID) +
+            data['orderTime'])
+        .set(data);
+  }
+
+
+
+  
+
   paymentDetails(String payment) {
-    
-    
     setState(() {
       return payment;
     });
@@ -287,6 +363,7 @@ class _PaymentPageState extends State<PaymentPage> {
 
 Future cartDataOrder(List cart) async {
   WriteBatch batch = EcommerceApp.firestore.batch();
+  
 
   EcommerceApp.firestore
       .collection(EcommerceApp.collectionUser)
@@ -298,6 +375,32 @@ Future cartDataOrder(List cart) async {
       try {
         if (cart.contains(productId.id.toString())) {
           batch.update(productId.reference, {"status": "Order"});
+
+          
+        }
+      } on FormatException catch (error) {
+        print("The document ${error.source} could not be parsed.");
+        return null;
+      }
+    });
+    return batch.commit();
+  });
+}
+
+Future cartDataUsersOrders(List cart) async {
+  WriteBatch batch = EcommerceApp.firestore.batch();
+  
+
+  EcommerceApp.firestore
+      .collection("users_carts_orders")
+      .get()
+      .then((querySnapshot) {
+    querySnapshot.docs.forEach((productId) {
+      try {
+        if (cart.contains(productId.id.toString())) {
+          batch.update(productId.reference, {"status": "Order"});
+
+          
         }
       } on FormatException catch (error) {
         print("The document ${error.source} could not be parsed.");

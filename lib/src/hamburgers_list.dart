@@ -276,7 +276,6 @@ Widget sourceInfoBurger(ItemModel model, BuildContext context,
                                                         model.title,
                                                         model,
                                                         context);
-                                                    
                                                   },
                                                 )
                                               : IconButton(
@@ -353,6 +352,15 @@ checkProductIdinCart(String tittleAsId, ItemModel model, BuildContext context) {
       : saveItemInfoUserCart(tittleAsId, model, context);
 }
 
+// checkProductInCartOrders(
+//     String tittleAsId, ItemModel model, BuildContext context) {
+//   EcommerceApp.sharedPreferences
+//           .getStringList(EcommerceApp.userCartList)
+//           .contains(tittleAsId.toString())
+//       ? Fluttertoast.showToast(msg: "Articulo ya existe.")
+//       : saveUsersOrdersByItem(tittleAsId, model, context);
+// }
+
 // checkItemInCart2(String productId, BuildContext context) {
 //   EcommerceApp.sharedPreferences
 //           .getStringList(EcommerceApp.userCartList)
@@ -381,29 +389,8 @@ addItemToCart(String titleAsID, BuildContext context) {
   });
 }
 
-addItemToCart2(String productId, BuildContext context) {
-  List temCartList =
-      EcommerceApp.sharedPreferences.getStringList(EcommerceApp.userCartListID);
-  temCartList.add(productId);
-
-  EcommerceApp.firestore
-      .collection(EcommerceApp.collectionUser)
-      .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
-      .update({
-    EcommerceApp.userCartListID: temCartList,
-  }).then((v) {
-    Fluttertoast.showToast(msg: "Agregado con exito.");
-
-    EcommerceApp.sharedPreferences
-        .setStringList(EcommerceApp.userCartListID, temCartList);
-
-    Provider.of<CartItemCounter>(context, listen: false).displayResult();
-  });
-}
-
 saveItemInfoUserCart(String tittleAsId, ItemModel model, BuildContext context) {
   String productId = DateTime.now().millisecondsSinceEpoch.toString();
-
   EcommerceApp.firestore
       .collection(EcommerceApp.collectionUser)
       .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
@@ -422,6 +409,47 @@ saveItemInfoUserCart(String tittleAsId, ItemModel model, BuildContext context) {
     "productId": productId
   }).whenComplete(() {
     addItemToCart2(productId, context);
+    saveUsersOrdersByItem(model.title, productId, model, context);
+  });
+}
+
+saveUsersOrdersByItem(
+  String tittleAsId,
+  productId,
+  ItemModel model,
+  BuildContext context,
+) {
+  EcommerceApp.firestore.collection("users_carts_orders").doc(productId).set({
+    "shortInfo": model.shortInfo.toString(),
+    "longDescription": model.longDescription.toString(),
+    "price": model.price.toInt(),
+    "cartPrice": model.price.toInt(),
+    "publishedDate": DateTime.now(),
+    "status": "available",
+    "thumbnailUrl": model.thumbnailUrl,
+    "title": model.title.toString(),
+    "qtyitems": model.qtyitems.toInt(),
+    "productId": productId
+  });
+}
+
+addItemToCart2(String productId, BuildContext context) {
+  List temCartList =
+      EcommerceApp.sharedPreferences.getStringList(EcommerceApp.userCartListID);
+  temCartList.add(productId);
+
+  EcommerceApp.firestore
+      .collection(EcommerceApp.collectionUser)
+      .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+      .update({
+    EcommerceApp.userCartListID: temCartList,
+  }).then((v) {
+    Fluttertoast.showToast(msg: "Agregado con exito.");
+
+    EcommerceApp.sharedPreferences
+        .setStringList(EcommerceApp.userCartListID, temCartList);
+
+    Provider.of<CartItemCounter>(context, listen: false).displayResult();
   });
 }
 
@@ -467,7 +495,8 @@ class _CantidadProductoState extends State<CantidadProducto> {
                   int min = widget.model.qtyitems;
                   if (min > 1) {
                     _removeProd();
-                  }else {
+                    _removeProdUsersOrders();
+                  } else {
                     return null;
                   }
                 },
@@ -507,6 +536,7 @@ class _CantidadProductoState extends State<CantidadProducto> {
                   int max = widget.model.qtyitems;
                   if (max < 20) {
                     _addProd();
+                    _addProdUsersOrders();
                   } else {
                     return null;
                   }
@@ -524,8 +554,7 @@ class _CantidadProductoState extends State<CantidadProducto> {
 
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
-        .doc(
-            EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
         .collection(EcommerceApp.userCartList2)
         .doc(widget.model.productId.toString())
         .update({
@@ -540,14 +569,39 @@ class _CantidadProductoState extends State<CantidadProducto> {
 
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
-        .doc(
-            EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
         .collection(EcommerceApp.userCartList2)
         .doc(widget.model.productId.toString())
         .update({
       "price": widget.model.price.toInt(),
       "cartPrice": widget.model.price.toInt() * widget.model.qtyitems.toInt(),
       "qtyitems": widget.model.qtyitems.toInt(),
+    });
+  }
+
+  _addProdUsersOrders() {
+    widget.model.qtyitems++;
+
+    EcommerceApp.firestore
+        .collection("users_carts_orders")
+        .doc(widget.model.productId.toString())
+        .update({
+      "price": widget.model.price.toInt(),
+      "cartPrice": widget.model.price.toInt() * widget.model.qtyitems.toInt() -  widget.model.price.toInt(),
+      "qtyitems": widget.model.qtyitems.toInt() - 1,
+    });
+  }
+
+  _removeProdUsersOrders() {
+    widget.model.qtyitems--;
+
+    EcommerceApp.firestore
+        .collection("users_carts_orders")
+        .doc(widget.model.productId.toString())
+        .update({
+      "price": widget.model.price.toInt(),
+      "cartPrice": widget.model.price.toInt() * widget.model.qtyitems.toInt() +  widget.model.price.toInt(),
+      "qtyitems": widget.model.qtyitems.toInt() + 1,
     });
   }
 }

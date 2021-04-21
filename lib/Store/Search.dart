@@ -1,49 +1,42 @@
-
 import 'package:app_hamburger/Admin/uploadItems.dart';
+import 'package:app_hamburger/Config/config.dart';
 import 'package:app_hamburger/Models/item.dart';
 import 'package:app_hamburger/Store/storehome.dart';
 import 'package:app_hamburger/Widgets/myDrawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
-
 import '../Widgets/customAppBar.dart';
 import '../main.dart';
-
-
-
 
 class SearchProduct extends StatefulWidget {
   @override
   _SearchProductState createState() => new _SearchProductState();
 }
 
-
-
-class _SearchProductState extends State<SearchProduct>
-{
-
+class _SearchProductState extends State<SearchProduct> {
   Future<QuerySnapshot> docList;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: MyAppBar(bottom: PreferredSize(child: searchWidget(), preferredSize: Size(56.0, 56.0)),),
+        appBar: MyAppBar(
+          bottom: PreferredSize(
+              child: searchWidget(), preferredSize: Size(56.0, 56.0)),
+        ),
         drawer: MyDrawer(),
         body: FutureBuilder<QuerySnapshot>(
           future: docList,
-          builder: (context, snap)
-          {
+          builder: (context, snap) {
             return snap.hasData
                 ? ListView.builder(
-                itemCount: snap.data.docs.length,
-                itemBuilder: (context, index)
-            {
-              ItemModel model = ItemModel.fromJson(snap.data.docs[index].data());
+                    itemCount: snap.data.docs.length,
+                    itemBuilder: (context, index) {
+                      ItemModel model =
+                          ItemModel.fromJson(snap.data.docs[index].data());
 
-              return sourceInfo(model, context);
-            },
-            )
+                      return sourceInfo(model, context);
+                    },
+                  )
                 : Text("Escriba en Area de buscador para ontener informacion");
           },
         ),
@@ -82,8 +75,7 @@ class _SearchProductState extends State<SearchProduct>
     );
   }
 
-  Widget searchWidget()
-  {
+  Widget searchWidget() {
     return Container(
       alignment: Alignment.center,
       width: MediaQuery.of(context).size.width,
@@ -92,13 +84,13 @@ class _SearchProductState extends State<SearchProduct>
         gradient: new LinearGradient(
           colors: [Colors.teal, Colors.teal],
           begin: const FractionalOffset(0.0, 0.0),
-          end: const FractionalOffset(1.0,0.0),
-          stops: [0.0,1.0],
+          end: const FractionalOffset(1.0, 0.0),
+          stops: [0.0, 1.0],
           tileMode: TileMode.clamp,
         ),
       ),
       child: Container(
-        width: MediaQuery.of(context).size.width -40,
+        width: MediaQuery.of(context).size.width - 40,
         height: 50.0,
         decoration: BoxDecoration(
           color: Colors.white,
@@ -108,17 +100,21 @@ class _SearchProductState extends State<SearchProduct>
           children: [
             Padding(
               padding: EdgeInsets.only(left: 8.0),
-              child: Icon(Icons.search, color: Colors.blueGrey,),
+              child: Icon(
+                Icons.search,
+                color: Colors.blueGrey,
+              ),
             ),
             Flexible(
               child: Padding(
                 padding: EdgeInsets.only(left: 8.0),
                 child: TextField(
-                  onChanged: (value)
-                  {
+                  onChanged: (value) {
                     startSearching(value);
+                    
                   },
-                  decoration: InputDecoration.collapsed(hintText: "Busqueda Avanzada"),
+                  decoration:
+                      InputDecoration.collapsed(hintText: "Busqueda Avanzada"),
                 ),
               ),
             )
@@ -128,18 +124,15 @@ class _SearchProductState extends State<SearchProduct>
     );
   }
 
-  
-  Future startSearching(String query)
-  {
-         docList = FirebaseFirestore.instance.collection("items")
+  Future startSearching(String query) {
+    docList = FirebaseFirestore.instance
+        .collection("items")
         .where("title", isGreaterThanOrEqualTo: query)
-        .get().then((QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((doc) {
-            print(doc["first_name"]);
-        });
-    });
-        return docList;
+        .get();
+    return docList;
+    
   }
+  
 }
 
 class SearchProductAdmin extends StatefulWidget {
@@ -147,45 +140,37 @@ class SearchProductAdmin extends StatefulWidget {
   _SearchProductAdminState createState() => new _SearchProductAdminState();
 }
 
-
-
-class _SearchProductAdminState extends State<SearchProductAdmin>
-{
-
-  Future<QuerySnapshot> docList;
+class _SearchProductAdminState extends State<SearchProductAdmin> {
+  Future<QuerySnapshot> docListA;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(bottom: PreferredSize(child: searchWidget(), preferredSize: Size(56.0, 56.0)),),
-        
+        appBar: AppBar(
+          bottom: PreferredSize(
+              child: searchWidget1(), preferredSize: Size(56.0, 56.0)),
+        ),
         body: FutureBuilder<QuerySnapshot>(
-          future: docList,
-          builder: (context, snap)
-          {
+          future: docListA,
+          builder: (context, snap) {
             return snap.hasData
                 ? ListView.builder(
-                itemCount: snap.data.docs.length,
-                itemBuilder: (context, index)
-            {
-              ItemModel model = ItemModel.fromJson(snap.data.docs[index].data());
+                    itemCount: snap.data.docs.length,
+                    itemBuilder: (context, index) {
+                      ItemModel model =
+                          ItemModel.fromJson(snap.data.docs[index].data());
 
-              return sourceInfoAdmin(model, context);
-            },
-            )
+                      return sourceInfoAdmin(model, context);
+                    },
+                  )
                 : Text("Escriba en Area de buscador para ontener informacion");
           },
         ),
-       
-           
-         
-       
       ),
     );
   }
 
-  Widget searchWidget()
-  {
+  Widget searchWidget1() {
     return Container(
       alignment: Alignment.center,
       width: MediaQuery.of(context).size.width,
@@ -194,13 +179,13 @@ class _SearchProductAdminState extends State<SearchProductAdmin>
         gradient: new LinearGradient(
           colors: [Colors.teal, Colors.teal],
           begin: const FractionalOffset(0.0, 0.0),
-          end: const FractionalOffset(1.0,0.0),
-          stops: [0.0,1.0],
+          end: const FractionalOffset(1.0, 0.0),
+          stops: [0.0, 1.0],
           tileMode: TileMode.clamp,
         ),
       ),
       child: Container(
-        width: MediaQuery.of(context).size.width -40,
+        width: MediaQuery.of(context).size.width - 40,
         height: 50.0,
         decoration: BoxDecoration(
           color: Colors.white,
@@ -210,17 +195,21 @@ class _SearchProductAdminState extends State<SearchProductAdmin>
           children: [
             Padding(
               padding: EdgeInsets.only(left: 8.0),
-              child: Icon(Icons.search, color: Colors.blueGrey,),
+              child: Icon(
+                Icons.search,
+                color: Colors.blueGrey,
+              ),
             ),
             Flexible(
               child: Padding(
                 padding: EdgeInsets.only(left: 8.0),
                 child: TextField(
-                  onChanged: (value)
-                  {
-                    startSearching(value);
+                  onChanged: (query) {
+                    // startSearching1(query);
+                    print("Print 2 ----------$docListA");
                   },
-                  decoration: InputDecoration.collapsed(hintText: "Busqueda Avanzada"),
+                  decoration:
+                      InputDecoration.collapsed(hintText: "Busqueda Avanzada"),
                 ),
               ),
             )
@@ -230,18 +219,14 @@ class _SearchProductAdminState extends State<SearchProductAdmin>
     );
   }
 
-  
-  Future startSearching(String query)
-  {
-         docList = FirebaseFirestore.instance.collection("items")
-        .where("title", isGreaterThanOrEqualTo: query)
-        .get().then((QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((doc) {
-            print(doc["first_name"]);
-        });
-    });
+  Future<QuerySnapshot> startSearching1(
+    String query,
+  ) {
+    docListA = FirebaseFirestore.instance
+        .collection("items")
 
-        return docList;
+        .get();
+
+    return docListA;
   }
 }
-

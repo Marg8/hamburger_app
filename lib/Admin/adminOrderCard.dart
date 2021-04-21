@@ -27,7 +27,7 @@ class AdminOrderCard extends StatelessWidget
             counter = counter + 1;
             route = MaterialPageRoute(builder: (c)=> AdminOrderDetails(orderID: orderID, orderBy: orderBy, addressID: addressID,));
           }
-        Navigator.pushReplacement(context, route);
+        Navigator.push(context, route);
       },
       child: Container(
         decoration: new BoxDecoration(

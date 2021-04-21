@@ -69,10 +69,10 @@ class _UploadPageState extends State<UploadPage> with AutomaticKeepAliveClientMi
           ),
         ),
         leading: IconButton(
-          icon: Icon(Icons.border_color, color: Colors.white,),
+          icon: Icon(Icons.list, color: Colors.white,),
           onPressed: () {
             Route route = MaterialPageRoute(builder: (c) => AdminShiftOrders1());
-            Navigator.pushReplacement(context, route);
+            Navigator.push(context, route);
           },
         ),
 
@@ -495,8 +495,7 @@ class _UploadPageState extends State<UploadPage> with AutomaticKeepAliveClientMi
   }
 }
 
-class AdminShiftOrders {
-}
+
 
 Widget sourceInfoAdmin(ItemModel model, BuildContext context,
     {Color background, removeCartFunction}) {
