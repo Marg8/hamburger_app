@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 import '../Widgets/loadingWidget.dart';
 
 String getOrderId = "";
+CancelOrder cancel = CancelOrder();
 
 class OrderDetails extends StatelessWidget {
   final String orderID;
@@ -67,7 +68,8 @@ class OrderDetails extends StatelessWidget {
                         ),
                         Padding(
                           padding: EdgeInsets.all(4.0),
-                          child: Text("Order Number: #" + dataMap["orderNumber"].toString()),
+                          child: Text("Order Number: #" +
+                              dataMap["orderNumber"].toString()),
                         ),
                         Padding(
                           padding: EdgeInsets.all(4.0),
@@ -95,8 +97,7 @@ class OrderDetails extends StatelessWidget {
                           builder: (c, dataSnapshot) {
                             return dataSnapshot.hasData
                                 ? OrderCard2(
-                                    itemCount:
-                                        dataSnapshot.data.docs.length,
+                                    itemCount: dataSnapshot.data.docs.length,
                                     data: dataSnapshot.data.docs,
                                   )
                                 : Center(
@@ -118,8 +119,8 @@ class OrderDetails extends StatelessWidget {
                             builder: (c, snap) {
                               return snap.hasData
                                   ? ShippingDetails(
-                                      model:
-                                          AddressModel.fromJson(snap.data.data()),
+                                      model: AddressModel.fromJson(
+                                          snap.data.data()),
                                     )
                                   : Center(
                                       child: circularProgress(),
@@ -303,6 +304,40 @@ class ShippingDetails extends StatelessWidget {
               ),
             ),
           ),
+        ),
+        Padding(
+          padding: EdgeInsets.all(10.0),
+          child: Center(
+            child: InkWell(
+              onTap: () {
+                cancel.cancelOrderUser(context, getOrderId);
+                cancel.cancelOrderAdmin(context, getOrderId);
+                
+              },
+              child: Container(
+                decoration: new BoxDecoration(
+                  gradient: new LinearGradient(
+                    colors: [Colors.red, Colors.red],
+                    begin: const FractionalOffset(0.0, 0.0),
+                    end: const FractionalOffset(1.0, 0.0),
+                    stops: [0.0, 1.0],
+                    tileMode: TileMode.clamp,
+                  ),
+                ),
+                width: MediaQuery.of(context).size.width - 40,
+                height: 50.0,
+                child: Center(
+                  child: Text(
+                    "Cancelar || Cancelar Order",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15.0,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ),
+          ),
         )
       ],
     );
@@ -311,8 +346,7 @@ class ShippingDetails extends StatelessWidget {
   confirmedUserOrderReceived(BuildContext context, String mOrderId) {
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionUser)
-        .doc(
-            EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
         .collection(EcommerceApp.collectionOrders)
         .doc(mOrderId)
         .delete();
@@ -323,5 +357,33 @@ class ShippingDetails extends StatelessWidget {
     Navigator.push(context, route);
 
     Fluttertoast.showToast(msg: "Orden Entregada. Confirmada.");
+  }
+}
+
+class CancelOrder {
+  cancelOrderUser(BuildContext context, String mOrderId) {
+    EcommerceApp.firestore
+        .collection(EcommerceApp.collectionUser)
+        .doc(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+        .collection(EcommerceApp.collectionOrders)
+        .doc(mOrderId)
+        .delete();
+
+    
+
+  }
+
+  cancelOrderAdmin(BuildContext context, String mOrderId) {
+    EcommerceApp.firestore
+        .collection(EcommerceApp.collectionOrders)
+        .doc(mOrderId)
+        .delete();
+
+    getOrderId = "";
+
+    Route route = MaterialPageRoute(builder: (c) => MyOrders());
+    Navigator.push(context, route);
+
+    Fluttertoast.showToast(msg: "Orden Cancelada.");
   }
 }

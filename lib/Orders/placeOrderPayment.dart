@@ -156,7 +156,7 @@ class _PaymentPageState extends State<PaymentPage> {
                       TextButton(
                         onPressed: () {
                           addOrderDetails(
-                              "Pago en Efectivo",
+                              "Pagar en Efectivo",
                               "${orderProvider.orderNumber.toInt() + 1}/" +
                                   EcommerceApp.sharedPreferences
                                       .getString(EcommerceApp.userName),
@@ -238,7 +238,7 @@ class _PaymentPageState extends State<PaymentPage> {
       "orderBy": EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID),
       EcommerceApp.productID: EcommerceApp.sharedPreferences
           .getStringList(EcommerceApp.userCartListID),
-      EcommerceApp.paymentDetails: "Pago en efectivo",
+      EcommerceApp.paymentDetails: paymentMethod,
       EcommerceApp.orderTime: DateTime.now().millisecondsSinceEpoch.toString(),
       EcommerceApp.isSuccess: true,
       "orderNumber": orderNumberC,
@@ -256,7 +256,7 @@ class _PaymentPageState extends State<PaymentPage> {
       "orderBy": EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID),
       EcommerceApp.productID: EcommerceApp.sharedPreferences
           .getStringList(EcommerceApp.userCartListID),
-      EcommerceApp.paymentDetails: "Pago en efectivo",
+      EcommerceApp.paymentDetails: paymentMethod,
       EcommerceApp.orderTime: DateTime.now().millisecondsSinceEpoch.toString(),
       EcommerceApp.isSuccess: true,
       "orderNumber": orderNumberC,

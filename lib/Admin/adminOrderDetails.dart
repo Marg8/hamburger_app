@@ -13,14 +13,15 @@ import 'package:intl/intl.dart';
 
 int theme = 0xff000000;
 
-String getOrderId="";
-class AdminOrderDetails extends StatelessWidget
-{
+String getOrderId = "";
+
+class AdminOrderDetails extends StatelessWidget {
   final String orderID;
   final String orderBy;
   final String addressID;
 
-  AdminOrderDetails({Key key, this.orderID, this.orderBy, this.addressID}) : super(key: key);
+  AdminOrderDetails({Key key, this.orderID, this.orderBy, this.addressID})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,82 +31,99 @@ class AdminOrderDetails extends StatelessWidget
         body: SingleChildScrollView(
           child: FutureBuilder<DocumentSnapshot>(
             future: EcommerceApp.firestore
-            .collection(EcommerceApp.collectionOrders)
-            .doc(getOrderId)
-            .get(),
-            builder: (c, snapshot)
-            {
+                .collection(EcommerceApp.collectionOrders)
+                .doc(getOrderId)
+                .get(),
+            builder: (c, snapshot) {
               Map dataMap;
-              if(snapshot.hasData)
-              {
+              if (snapshot.hasData) {
                 dataMap = snapshot.data.data();
               }
               return snapshot.hasData
                   ? Container(
-                child: Column(
-                    children: [
-                      AdminStatusBanner(status: dataMap[EcommerceApp.isSuccess],),
-                      SizedBox(height: 10.0,),
-                      Padding(
-                        padding: EdgeInsets.all(4.0),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            r"$" + dataMap[EcommerceApp.totalAmount].toString(),
-                            style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold,),
+                      child: Column(children: [
+                        AdminStatusBanner(
+                          status: dataMap[EcommerceApp.isSuccess],
+                        ),
+                        SizedBox(
+                          height: 10.0,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(4.0),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              r"$" +
+                                  dataMap[EcommerceApp.totalAmount].toString(),
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(4.0),
-                        child: Text("Order Number: #" + dataMap["orderNumber"].toString()),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(4.0),
-                        child: Text("Order at" + DateFormat("dd MMMM, yyyy - hh:mm aa")
-                            .format(DateTime.fromMillisecondsSinceEpoch(int.parse(dataMap["orderTime"]))),
-                          style: TextStyle(color: Colors.grey, fontSize: 16.0),
+                        Padding(
+                          padding: EdgeInsets.all(4.0),
+                          child: Text("Order Number: #" +
+                              dataMap["orderNumber"].toString()),
                         ),
-                      ),
-                      Divider(height: 2.0,),
-                       
-                      FutureBuilder<QuerySnapshot>(
-                        future: EcommerceApp.firestore
-                  .collection("users_carts_orders")
-                            .where("productId",whereIn: dataMap[EcommerceApp.productID])
-                            .get(),
-                        builder: (c, dataSnapshot)
-                        {
-                          return dataSnapshot.hasData
-                              ? OrderCard(
-                            itemCount: dataSnapshot.data.docs.length,
-                            data: dataSnapshot.data.docs,
-                          )
-                              : Center(child: circularProgress(),);
-                        },
-                      ),
-                      Divider(height: 2.0,),
-                      FutureBuilder<DocumentSnapshot>(
+                        Padding(
+                          padding: EdgeInsets.all(4.0),
+                          child: Text(
+                            "Order at" +
+                                DateFormat("dd MMMM, yyyy - hh:mm aa").format(
+                                    DateTime.fromMillisecondsSinceEpoch(
+                                        int.parse(dataMap["orderTime"]))),
+                            style:
+                                TextStyle(color: Colors.grey, fontSize: 16.0),
+                          ),
+                        ),
+                        Divider(
+                          height: 2.0,
+                        ),
+                        FutureBuilder<QuerySnapshot>(
                           future: EcommerceApp.firestore
-                              .collection(EcommerceApp.collectionUser)
-                              .doc(orderBy)
-                              .collection(EcommerceApp.subCollectionAddress)
-                              .doc(addressID)
+                              .collection("users_carts_orders")
+                              .where("productId",
+                                  whereIn: dataMap[EcommerceApp.productID])
                               .get(),
-                          builder: (c, snap)
-                          {
-                            return snap.hasData
-                                ? AdminShippingDetails(model: AddressModel.fromJson(snap.data.data()),)
-                                : Center(child: circularProgress(),);
-                          }
-
-                      ),
-                    ]
-                ),
-              )
-                  : Center(child: circularProgress(),);
+                          builder: (c, dataSnapshot) {
+                            return dataSnapshot.hasData
+                                ? OrderCard(
+                                    itemCount: dataSnapshot.data.docs.length,
+                                    data: dataSnapshot.data.docs,
+                                  )
+                                : Center(
+                                    child: circularProgress(),
+                                  );
+                          },
+                        ),
+                        Divider(
+                          height: 2.0,
+                        ),
+                        FutureBuilder<DocumentSnapshot>(
+                            future: EcommerceApp.firestore
+                                .collection(EcommerceApp.collectionUser)
+                                .doc(orderBy)
+                                .collection(EcommerceApp.subCollectionAddress)
+                                .doc(addressID)
+                                .get(),
+                            builder: (c, snap) {
+                              return snap.hasData
+                                  ? AdminShippingDetails(
+                                      model: AddressModel.fromJson(
+                                          snap.data.data()),
+                                    )
+                                  : Center(
+                                      child: circularProgress(),
+                                    );
+                            }),
+                      ]),
+                    )
+                  : Center(
+                      child: circularProgress(),
+                    );
             },
-
           ),
         ),
       ),
@@ -113,16 +131,13 @@ class AdminOrderDetails extends StatelessWidget
   }
 }
 
-class AdminStatusBanner extends StatelessWidget
-{
+class AdminStatusBanner extends StatelessWidget {
   final bool status;
 
   AdminStatusBanner({Key key, this.status}) : super(key: key);
 
   @override
-  Widget build(BuildContext context)
-  {
-
+  Widget build(BuildContext context) {
     String msg;
     IconData iconData;
 
@@ -132,26 +147,26 @@ class AdminStatusBanner extends StatelessWidget
     return Container(
       decoration: new BoxDecoration(
         gradient: new LinearGradient(
-          colors: [Color(theme),Color(theme)],
+          colors: [Color(theme), Color(theme)],
           begin: const FractionalOffset(0.0, 0.0),
-          end: const FractionalOffset(1.0,0.0),
-          stops: [0.0,1.0],
+          end: const FractionalOffset(1.0, 0.0),
+          stops: [0.0, 1.0],
           tileMode: TileMode.clamp,
         ),
       ),
       height: 40.0,
       child: Padding(
         padding: const EdgeInsets.only(left: 15),
-        child: Row(        
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             GestureDetector(
-              onTap: ()
-              {
+              onTap: () {
                 Route route = MaterialPageRoute(builder: (c) => UploadPage());
                 Navigator.pop(context, route);
               },
-              child: Container(alignment: Alignment.centerRight,
+              child: Container(
+                alignment: Alignment.centerRight,
                 child: Icon(
                   Icons.arrow_back,
                   color: Colors.white,
@@ -164,7 +179,9 @@ class AdminStatusBanner extends StatelessWidget
               "Order Shipped" + msg,
               style: TextStyle(color: Colors.white),
             ),
-            SizedBox(width: 10.0,),
+            SizedBox(
+              width: 10.0,
+            ),
             CircleAvatar(
               radius: 8.0,
               backgroundColor: Colors.grey,
@@ -176,8 +193,9 @@ class AdminStatusBanner extends StatelessWidget
                 ),
               ),
             ),
-            SizedBox(width: 100,),
-
+            SizedBox(
+              width: 100,
+            ),
           ],
         ),
       ),
@@ -185,97 +203,88 @@ class AdminStatusBanner extends StatelessWidget
   }
 }
 
-
-class AdminShippingDetails extends StatelessWidget
-{
+class AdminShippingDetails extends StatelessWidget {
   final AddressModel model;
 
   AdminShippingDetails({Key key, this.model}) : super(key: key);
 
   @override
-  Widget build(BuildContext context)
-  {
+  Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 20.0,),
+        SizedBox(
+          height: 20.0,
+        ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.0,),
+          padding: EdgeInsets.symmetric(
+            horizontal: 10.0,
+          ),
           child: Text(
             "Shipment Details:",
             style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
           ),
         ),
-
         Container(
           padding: EdgeInsets.symmetric(horizontal: 90.0, vertical: 5.0),
           width: screenWidth,
           child: Table(
             children: [
-
-
-              TableRow(
-                  children: [
-                    KeyText(msg: "Name",),
-                    Text(model.name),
-                  ]
-              ),
-
-              TableRow(
-                  children: [
-                    KeyText(msg: "Phone Number",),
-                    Text(model.phoneNumber),
-                  ]
-              ),
-
-              TableRow(
-                  children: [
-                    KeyText(msg: "Flat Number",),
-                    Text(model.flatNumber),
-                  ]
-              ),
-
-              TableRow(
-                  children: [
-                    KeyText(msg: "City",),
-                    Text(model.city),
-                  ]
-              ),
-
-              TableRow(
-                  children: [
-                    KeyText(msg: "State",),
-                    Text(model.state),
-                  ]
-              ),
-
-              TableRow(
-                  children: [
-                    KeyText(msg: "Pin code",),
-                    Text(model.pincode),
-                  ]
-              ),
+              TableRow(children: [
+                KeyText(
+                  msg: "Name",
+                ),
+                Text(model.name),
+              ]),
+              TableRow(children: [
+                KeyText(
+                  msg: "Phone Number",
+                ),
+                Text(model.phoneNumber),
+              ]),
+              TableRow(children: [
+                KeyText(
+                  msg: "Flat Number",
+                ),
+                Text(model.flatNumber),
+              ]),
+              TableRow(children: [
+                KeyText(
+                  msg: "City",
+                ),
+                Text(model.city),
+              ]),
+              TableRow(children: [
+                KeyText(
+                  msg: "State",
+                ),
+                Text(model.state),
+              ]),
+              TableRow(children: [
+                KeyText(
+                  msg: "Pin code",
+                ),
+                Text(model.pincode),
+              ]),
             ],
           ),
         ),
-
         Padding(
           padding: EdgeInsets.all(10.0),
           child: Center(
             child: InkWell(
-              onTap: ()
-              {
+              onTap: () {
                 confirmParcelShifted(context, getOrderId);
               },
               child: Container(
                 decoration: new BoxDecoration(
                   gradient: new LinearGradient(
-                    colors: [Color(theme),Color(theme)],
+                    colors: [Color(theme), Color(theme)],
                     begin: const FractionalOffset(0.0, 0.0),
-                    end: const FractionalOffset(1.0,0.0),
-                    stops: [0.0,1.0],
+                    end: const FractionalOffset(1.0, 0.0),
+                    stops: [0.0, 1.0],
                     tileMode: TileMode.clamp,
                   ),
                 ),
@@ -290,12 +299,42 @@ class AdminShippingDetails extends StatelessWidget
               ),
             ),
           ),
+        ),
+
+        Padding(
+          padding: EdgeInsets.all(10.0),
+          child: Center(
+            child: InkWell(
+              onTap: () {
+                confirmParcelShifted(context, getOrderId);
+              },
+              child: Container(
+                decoration: new BoxDecoration(
+                  gradient: new LinearGradient(
+                    colors: [Colors.red, Colors.red],
+                    begin: const FractionalOffset(0.0, 0.0),
+                    end: const FractionalOffset(1.0, 0.0),
+                    stops: [0.0, 1.0],
+                    tileMode: TileMode.clamp,
+                  ),
+                ),
+                width: MediaQuery.of(context).size.width - 40,
+                height: 50.0,
+                child: Center(
+                  child: Text(
+                    "Cancelar || Cancelar Orden",
+                    style: TextStyle(color: Colors.white, fontSize: 15.0),
+                  ),
+                ),
+              ),
+            ),
+          ),
         )
       ],
     );
   }
-  confirmParcelShifted(BuildContext context, String mOrderId)
-  {
+
+  confirmParcelShifted(BuildContext context, String mOrderId) {
     EcommerceApp.firestore
         .collection(EcommerceApp.collectionOrders)
         .doc(mOrderId)
@@ -303,11 +342,9 @@ class AdminShippingDetails extends StatelessWidget
 
     getOrderId = "";
 
-    Route route = MaterialPageRoute(builder: (c)=> UploadPage());
+    Route route = MaterialPageRoute(builder: (c) => UploadPage());
     Navigator.push(context, route);
 
     Fluttertoast.showToast(msg: "Order has been Received. Confirmed.");
   }
 }
-
-

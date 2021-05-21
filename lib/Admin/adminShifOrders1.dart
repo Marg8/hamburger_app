@@ -86,6 +86,7 @@ class _AdminShiftOrders1State extends State<AdminShiftOrders1> {
                             .where("productId",
                                 whereIn: snapshot.data.docs[index]
                                     .data()[EcommerceApp.productID])
+                                    
                             .get(),
                         builder: (c, snaps) {
                           return snaps.hasData
