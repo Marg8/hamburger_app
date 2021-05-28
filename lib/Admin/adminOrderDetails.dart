@@ -52,16 +52,10 @@ class AdminOrderDetails extends StatelessWidget {
                           padding: EdgeInsets.all(4.0),
                           child: Align(
                             alignment: Alignment.centerLeft,
-                            child: Text(
-                              r"$" +
-                                  dataMap[EcommerceApp.totalAmount].toString(),
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            child: headCostAdmin(dataMap)
                           ),
                         ),
+                        
                         Padding(
                           padding: EdgeInsets.all(4.0),
                           child: Text("Order Number: #" +
@@ -128,6 +122,69 @@ class AdminOrderDetails extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Column headCostAdmin(Map<dynamic, dynamic> dataMap) {
+    double total = dataMap["cost"]+dataMap[EcommerceApp.totalAmount];
+    return Column(children: [
+    Row(
+      children: [
+        Text(
+          "Costo de Compra:",
+          style: TextStyle(
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Spacer(),
+        Text(
+          r"$ " + dataMap[EcommerceApp.totalAmount]?.toString() + " MXN",
+          style: TextStyle(
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    ),
+    Row(
+      children: [
+        Text(
+          "Costo de Envio:",
+          style: TextStyle(
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Spacer(),
+        Text(
+          r"$ " + dataMap["cost"].toString() + " MXN",
+          style: TextStyle(
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    ),
+    Row(
+      children: [
+        Text(
+          "Total:",
+          style: TextStyle(
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Spacer(),
+        Text(
+          r"$ " + total.toString() + " MXN",
+          style: TextStyle(
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    ),
+  ]);
   }
 }
 

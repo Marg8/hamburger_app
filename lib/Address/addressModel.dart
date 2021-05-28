@@ -1,15 +1,15 @@
 // To parse this JSON data, do
 //
-//     final newsResponse = newsResponseFromJson(jsonString);
+//     final CpModel = CpModelFromJson(jsonString);
 
 import 'dart:convert';
 
-List<Map<String, NewsResponse>> newsResponseFromJson(String str) => List<Map<String, NewsResponse>>.from(json.decode(str).map((x) => Map.from(x).map((k, v) => MapEntry<String, NewsResponse>(k, NewsResponse.fromJson(v)))));
+List<Map<String, CpModel>> cpModelFromJson(String str) => List<Map<String, CpModel>>.from(json.decode(str).map((x) => Map.from(x).map((k, v) => MapEntry<String, CpModel>(k, CpModel.fromJson(v)))));
 
-String newsResponseToJson(List<Map<String, NewsResponse>> data) => json.encode(List<dynamic>.from(data.map((x) => Map.from(x).map((k, v) => MapEntry<String, dynamic>(k, v.toJson())))));
+String cpModelToJson(List<Map<String, CpModel>> data) => json.encode(List<dynamic>.from(data.map((x) => Map.from(x).map((k, v) => MapEntry<String, dynamic>(k, v.toJson())))));
 
-class NewsResponse {
-    NewsResponse({
+class CpModel {
+    CpModel({
         this.asentamiento,
         this.nombreAsentamiento,
         this.municipio,
@@ -27,7 +27,7 @@ class NewsResponse {
     int costo;
     int zonas;
 
-    factory NewsResponse.fromJson(Map<String, dynamic> json) => NewsResponse(
+    factory CpModel.fromJson(Map<String, dynamic> json) => CpModel(
         asentamiento: asentamientoValues.map[json["Asentamiento"]],
         nombreAsentamiento: json["Nombre Asentamiento"],
         municipio: municipioValues.map[json["Municipio"]],

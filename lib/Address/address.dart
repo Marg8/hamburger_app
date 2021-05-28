@@ -13,7 +13,8 @@ import 'addAddress.dart';
 
 class Address extends StatefulWidget {
   final double totalAmount;
-  const Address({Key key, this.totalAmount}) : super(key: key);
+  final double cost;
+  const Address({Key key, this.totalAmount, this.cost}) : super(key: key);
 
   @override
   _AddressState createState() => _AddressState();
@@ -67,9 +68,9 @@ class _AddressState extends State<Address> {
                                     return AddressCard(
                                       currentIndex: address.count,
                                       value: index,
-                                      addressId: snapshot
-                                          .data.docs[index].id,
+                                      addressId: snapshot.data.docs[index].id,
                                       totalAmount: widget.totalAmount,
+                                      
                                       model: AddressModel.fromJson(
                                           snapshot.data.docs[index].data()),
                                     );
@@ -124,6 +125,7 @@ class AddressCard extends StatefulWidget {
   final double totalAmount;
   final int currentIndex;
   final int value;
+  final double cost;
 
   AddressCard(
       {Key key,
@@ -131,7 +133,7 @@ class AddressCard extends StatefulWidget {
       this.currentIndex,
       this.addressId,
       this.totalAmount,
-      this.value})
+      this.value, this.cost})
       : super(key: key);
 
   @override
@@ -199,6 +201,12 @@ class _AddressCardState extends State<AddressCard> {
                             ]),
                             TableRow(children: [
                               KeyText(
+                                msg: "Costo de Envio",
+                              ),
+                              Text("\$ ${widget.model.cost.toString()} MXN"),
+                            ]),
+                            TableRow(children: [
+                              KeyText(
                                 msg: "Ciudad",
                               ),
                               Text(widget.model.city),
@@ -230,6 +238,7 @@ class _AddressCardState extends State<AddressCard> {
                             builder: (c) => PaymentPage(
                                   addressId: widget.addressId,
                                   totalAmount: widget.totalAmount,
+                                  cost: widget.model.cost,
                                 ));
                         Navigator.push(context, route);
                       },

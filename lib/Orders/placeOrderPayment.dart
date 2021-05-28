@@ -11,16 +11,17 @@ import '../Config/config.dart';
 
 bool payment = true;
 ItemModel model;
- 
+
 class PaymentPage extends StatefulWidget {
   final String addressId;
   final double totalAmount;
+  final double cost;
 
   PaymentPage({
     Key key,
     this.addressId,
     this.totalAmount,
-    orderNumber,
+    orderNumber, this.cost,
   }) : super(key: key);
 
   @override
@@ -223,6 +224,7 @@ class _PaymentPageState extends State<PaymentPage> {
     writeOrderDetailsForUser({
       EcommerceApp.addressID: widget.addressId,
       EcommerceApp.totalAmount: widget.totalAmount,
+      "cost": widget.cost,
       "orderBy": EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID),
       EcommerceApp.productID: EcommerceApp.sharedPreferences
           .getStringList(EcommerceApp.userCartListID),
@@ -235,6 +237,7 @@ class _PaymentPageState extends State<PaymentPage> {
     writeOrderDetailsForAdmin({
       EcommerceApp.addressID: widget.addressId,
       EcommerceApp.totalAmount: widget.totalAmount,
+      "cost": widget.cost,
       "orderBy": EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID),
       EcommerceApp.productID: EcommerceApp.sharedPreferences
           .getStringList(EcommerceApp.userCartListID),
@@ -243,7 +246,6 @@ class _PaymentPageState extends State<PaymentPage> {
       EcommerceApp.isSuccess: true,
       "orderNumber": orderNumberC,
     }).whenComplete(() => {
-
           cartDataOrder(cart),
           cartDataUsersOrders(cart),
           emptyCartNowID(),
@@ -253,6 +255,7 @@ class _PaymentPageState extends State<PaymentPage> {
     writeOrderDetailsForAdminHistory({
       EcommerceApp.addressID: widget.addressId,
       EcommerceApp.totalAmount: widget.totalAmount,
+      "cost": widget.cost,
       "orderBy": EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID),
       EcommerceApp.productID: EcommerceApp.sharedPreferences
           .getStringList(EcommerceApp.userCartListID),
@@ -261,7 +264,6 @@ class _PaymentPageState extends State<PaymentPage> {
       EcommerceApp.isSuccess: true,
       "orderNumber": orderNumberC,
     });
-
   }
 
   emptyCartNow() {
@@ -334,10 +336,6 @@ class _PaymentPageState extends State<PaymentPage> {
         .set(data);
   }
 
-
-
-  
-
   paymentDetails(String payment) {
     setState(() {
       return payment;
@@ -363,7 +361,6 @@ class _PaymentPageState extends State<PaymentPage> {
 
 Future cartDataOrder(List cart) async {
   WriteBatch batch = EcommerceApp.firestore.batch();
-  
 
   EcommerceApp.firestore
       .collection(EcommerceApp.collectionUser)
@@ -375,8 +372,6 @@ Future cartDataOrder(List cart) async {
       try {
         if (cart.contains(productId.id.toString())) {
           batch.update(productId.reference, {"status": "Order"});
-
-          
         }
       } on FormatException catch (error) {
         print("The document ${error.source} could not be parsed.");
@@ -389,7 +384,6 @@ Future cartDataOrder(List cart) async {
 
 Future cartDataUsersOrders(List cart) async {
   WriteBatch batch = EcommerceApp.firestore.batch();
-  
 
   EcommerceApp.firestore
       .collection("users_carts_orders")
@@ -399,8 +393,6 @@ Future cartDataUsersOrders(List cart) async {
       try {
         if (cart.contains(productId.id.toString())) {
           batch.update(productId.reference, {"status": "Order"});
-
-          
         }
       } on FormatException catch (error) {
         print("The document ${error.source} could not be parsed.");

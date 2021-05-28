@@ -10,6 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AddAddress extends StatefulWidget {
   @override
@@ -33,10 +34,13 @@ class _AddAddressState extends State<AddAddress> {
 
   final cPinCode = TextEditingController();
 
+  final cCost = TextEditingController();
+  String _nombre = "";
+  String _codigoPostalText = "";
+
   @override
   void initState() {
     _getCodigoPostal();
-
     super.initState();
   }
 
@@ -50,16 +54,18 @@ class _AddAddressState extends State<AddAddress> {
         key: scaffoldMessengerKey,
         appBar: MyAppBar(),
         drawer: MyDrawer(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             if (formKey.currentState.validate()) {
               final model = AddressModel(
                 name: cName.text.trim(),
-                state: cState.text.trim(),
-                pincode: cPinCode.text,
+                state: _estado.toString(),
+                pincode: _codigoPostal.toString(),
+                cost: double.parse(_costo),
                 phoneNumber: cPhoneNumber.text,
                 flatNumber: cFlatHomeNumber.text,
-                city: cCity.text.trim(),
+                city: _ciudad.toString(),
                 addressID: DateTime.now().millisecondsSinceEpoch.toString(),
               ).toJson();
 
@@ -88,107 +94,341 @@ class _AddAddressState extends State<AddAddress> {
           backgroundColor: Colors.black,
           icon: Icon(Icons.check),
         ),
-        body: Column(
+        body: ListView(
           children: [
-            AddInput(
-                formKey: formKey,
-                cName: cName,
-                cPhoneNumber: cPhoneNumber,
-                cFlatHomeNumber: cFlatHomeNumber,
-                cCity: cCity,
-                cState: cState,
-                cPinCode: cPinCode),
-            Container(
-              padding: EdgeInsets.only(left: 15, right: 15, top: 5),
-              color: Colors.white,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Expanded(
-                    child: DropdownButtonHideUnderline(
-                      child: ButtonTheme(
-                        alignedDropdown: true,
-                        child: DropdownButton<String>(
-                          value: _codigoPostal,
-                          iconSize: 30,
-                          icon: (null),
-                          style: TextStyle(
-                            color: Colors.black54,
-                            fontSize: 16,
-                          ),
-                          hint: Text('Select State'),
-                          onChanged: (String newValue) {
-                            setState(() {
-                              _colonia = null;
-                              _codigoPostal = newValue;
-                              _getColoniaList();
-                              print(_codigoPostal);
-                            });
-                          },
-                          items: getOption?.map((item) {
-                                return new DropdownMenuItem(
-                                  child: new Text(
-                                      item["Código Postal"].toString()),
-                                  value: item["Código Postal"].toString(),
-                                );
-                              })?.toList() ??
-                              [],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            Container(
-              padding: EdgeInsets.only(left: 15, right: 15, top: 5),
-              color: Colors.white,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Expanded(
-                    child: DropdownButtonHideUnderline(
-                      child: ButtonTheme(
-                        alignedDropdown: true,
-                        child: DropdownButton<String>(
-                          value: _colonia,
-                          iconSize: 30,
-                          icon: (null),
-                          style: TextStyle(
-                            color: Colors.black54,
-                            fontSize: 16,
-                          ),
-                          hint: Text('Colonia'),
-                          onChanged: (String newValue) {
-                            setState(() {
-                              _colonia = newValue;
-
-                              print(_colonia);
-                            });
-                          },
-                          items: coloniaList?.map((item) {
-                                return new DropdownMenuItem(
-                                  child: new Text(
-                                      item["Nombre Asentamiento"].toString()),
-                                  value: item["Nombre Asentamiento"].toString(),
-                                );
-                              })?.toList() ??
-                              [],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 30,
+            Column(
+              children: <Widget>[
+                AddInput(
+                  formKey: formKey,
+                  cName: cName,
+                  cPhoneNumber: cPhoneNumber,
+                  cFlatHomeNumber: cFlatHomeNumber,
+                  cCity: cCity,
+                  cState: cState,
+                  cPinCode: cPinCode,
+                  cCost: cCost,
+                ),
+                Row(
+                  children: [
+                    buildInputoCode(),
+                    buildCodigoPostal(),
+                  ],
+                ),
+                buildButtonCP(),
+                SizedBox(
+                  height: 5,
+                ),
+                buildColonia(),
+                buildCosto(),
+                SizedBox(
+                  height: 5,
+                ),
+                buildCiudad(),
+                SizedBox(
+                  height: 5,
+                ),
+                buildEstado()
+              ],
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget buildButtonCP() {
+    return Container(
+      decoration: new BoxDecoration(
+        gradient: new LinearGradient(
+          colors: [Colors.transparent, Colors.transparent],
+          begin: const FractionalOffset(0.0, 0.0),
+          end: const FractionalOffset(1.0, 0.0),
+          stops: [0.0, 1.0],
+          tileMode: TileMode.clamp,
+        ),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            //Icon(Icons.shop_two, color: Colors.black, size: 80.0,),
+            Padding(
+              padding: EdgeInsets.only(top: 0.0),
+              child: ElevatedButton(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.g_translate),
+                    Text(
+                      "Buscar Codigo Postal",
+                      style: TextStyle(fontSize: 15.0, color: Colors.white),
+                    ),
+                  ],
+                ),
+                // color: Colors.black,
+                onPressed: () {
+                  launch(
+                      "https://www.google.com/search?q=codigo+postal+zona+centro+matamoros&sxsrf=ALeKk0165kbzk-vF8i43ij05wNiVJVmsKw%3A1621737472593&ei=AMCpYP6-I9O5tAauqYn4Aw&oq=codigo+postal+zona+centro&gs_lcp=Cgdnd3Mtd2l6EAEYAjICCAAyAggAMgIIADICCAAyAggAMgIIADICCAAyAggAMggIABDHARCvATICCAA6BwgjELADECc6BwgAEEcQsANQiVBY5Fxgmm1oAXACeACAAV-IAZcIkgECMTKYAQCgAQGqAQdnd3Mtd2l6yAEJwAEB&sclient=gws-wiz");
+                },
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildInputoCode() {
+    return Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Container(
+        width: 150,
+        child: TextFormField(
+          textCapitalization: TextCapitalization.sentences,
+          validator: (val) =>
+              val.isEmpty ? "No Puede Dejar Campos Vacios" : null,
+          onFieldSubmitted: (valor) {
+            setState(() {
+              _codigoPostal = valor;
+              print(_codigoPostal);
+              _getColoniaList();
+              _getCostoList();
+              _colonia = null;
+              _costo = null;
+            });
+          },
+          decoration: InputDecoration(
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+            hintText: "87413",
+            labelText: "CP",
+            suffixIcon: Icon(Icons.filter_center_focus_rounded),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Container buildCodigoPostal() {
+    return Container(
+      width: 200,
+      padding: EdgeInsets.only(left: 15, right: 15, top: 5),
+      color: Colors.white,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Expanded(
+            child: DropdownButtonHideUnderline(
+              child: ButtonTheme(
+                alignedDropdown: true,
+                child: DropdownButton<String>(
+                  value: _codigoPostal,
+                  iconSize: 30,
+                  icon: (null),
+                  style: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 16,
+                  ),
+                  hint: Text('Codigo Postal'),
+                  onChanged: (String newValue) {
+                    setState(() {
+                      _colonia = null;
+                      _costo = null;
+                      _codigoPostal = newValue;
+                      _getColoniaList();
+                      _getCostoList();
+                      print(_codigoPostal);
+                    });
+                  },
+                  items: getOption?.map((item) {
+                        return new DropdownMenuItem(
+                          child: new Text(item["Código Postal"].toString()),
+                          value: item["Código Postal"].toString(),
+                        );
+                      })?.toList() ??
+                      [],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container buildColonia() {
+    return Container(
+      padding: EdgeInsets.only(left: 15, right: 15, top: 5),
+      color: Colors.white,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Expanded(
+            child: DropdownButtonHideUnderline(
+              child: ButtonTheme(
+                alignedDropdown: true,
+                child: DropdownButton<String>(
+                  value: _colonia,
+                  iconSize: 30,
+                  icon: (null),
+                  style: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 16,
+                  ),
+                  hint: Text('Colonia'),
+                  onChanged: (String newValue) {
+                    setState(() {
+                      _colonia = newValue;
+
+                      print(_colonia);
+                      // _getCiudadList();
+                    });
+                  },
+                  items: coloniaList?.map((item) {
+                        return new DropdownMenuItem(
+                          child:
+                              new Text(item["Nombre Asentamiento"].toString()),
+                          value: item["Nombre Asentamiento"].toString(),
+                        );
+                      })?.toList() ??
+                      [],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container buildCosto() {
+    
+    return Container(
+      width: 200,
+      padding: EdgeInsets.only(left: 15, right: 15, top: 5),
+      color: Colors.white,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Expanded(
+            child: DropdownButtonHideUnderline(
+              child: ButtonTheme(
+                alignedDropdown: true,
+                child: DropdownButton<String>(
+                  value: _costo,
+                  iconSize: 30,
+                  icon: (null),
+                  style: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 16,
+                  ),
+                  hint: Text('Costo de Envio'),
+                  onChanged: (String newValueC) {
+                    setState(() {
+                      
+                      _costo = newValueC;
+                      
+                      
+                      print(_costo);
+                    });
+                  },
+                  items: costoList?.map((item) {
+                        return new DropdownMenuItem(
+                          child: new Text(item["Costo"].toString()),
+                          value: item["Costo"].toString(),
+                        );
+                      })?.toList() ??
+                      [],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container buildCiudad() {
+    return Container(
+      padding: EdgeInsets.only(left: 15, right: 15, top: 5),
+      color: Colors.white,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Expanded(
+            child: DropdownButtonHideUnderline(
+              child: ButtonTheme(
+                alignedDropdown: true,
+                child: DropdownButton<String>(
+                  value: _ciudad,
+                  iconSize: 30,
+                  icon: (null),
+                  style: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 16,
+                  ),
+                  hint: Text('Ciudad'),
+                  onChanged: (String newValue) {
+                    setState(() {
+                      _ciudad = newValue;
+                      print(_ciudad);
+                      // _getEstadoList();
+                    });
+                  },
+                  items: ciudadList?.map((item) {
+                        return new DropdownMenuItem(
+                          child: new Text("Matamoros".toString()),
+                          value: "Matamoros".toString(),
+                        );
+                      })?.toList() ??
+                      [],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Container buildEstado() {
+    return Container(
+      padding: EdgeInsets.only(left: 15, right: 15, top: 5),
+      color: Colors.white,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Expanded(
+            child: DropdownButtonHideUnderline(
+              child: ButtonTheme(
+                alignedDropdown: true,
+                child: DropdownButton<String>(
+                  value: _estado,
+                  iconSize: 30,
+                  icon: (null),
+                  style: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 16,
+                  ),
+                  hint: Text('Estado'),
+                  onChanged: (String newValue) {
+                    setState(() {
+                      _estado = newValue;
+                      print(_estado);
+                    });
+                  },
+                  items: estadoList?.map((item) {
+                        return new DropdownMenuItem(
+                          child: new Text("Tamaulipas, Mex.".toString()),
+                          value: "Tamaulipas, Mex.".toString(),
+                        );
+                      })?.toList() ??
+                      [],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -217,43 +457,42 @@ class _AddAddressState extends State<AddAddress> {
     });
   }
 
-  // Widget _lista() {
-  //   return FutureBuilder(
-  //     future: addressProvider.loadData(),
-  //     initialData: [],
-  //     builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
-  //       return DropdownButton(
-  //         value: _opcionSeleccionada,
-  //         items: _listaItems(snapshot.data, context)
-  //             .map((opt) => DropdownMenuItem<String>(
-  //                   child: Text(_opcionSeleccionada),
-  //                   value: _opcionSeleccionada,
-  //                 ))
-  //             .toList(),
-  //         onChanged: (opt) {
-  //           setState(() {
-  //             _opcionSeleccionada = opt;
-  //           });
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
+  String _costo;
+  List costoList;
+  Future<String> _getCostoList() async {
+    await rootBundle.loadString("json/addressdatacost.json").then((response) {
+      Map datos = json.decode(response);
 
-  // List<DropdownMenuItem<String>> _listaItems(
-  //     List<dynamic> data, BuildContext context) {
-  //   final List<DropdownMenuItem<String>> getOption =
-  //       new List.empty(growable: true);
+      setState(() {
+        costoList = datos[_codigoPostal];
+      });
+    });
+  }
 
-  //   data.forEach((opt) {
-  //     getOption.add(DropdownMenuItem(
-  //       child: Text(opt["Nombre Asentamiento"]),
-  //       value: "prueba",
-  //     ));
+  String _ciudad = "Matamoros";
+  List ciudadList = ["Matamoros"];
+  // Future<String> _getCiudadList() async {
+  //   await rootBundle.loadString("json/addressdata.json").then((response) {
+  //     Map datos = json.decode(response);
+
+  //     setState(() {
+  //       ciudadList = datos[_codigoPostal];
+  //     });
   //   });
-
-  //   return getOption;
   // }
+
+  String _estado = "Tamaulipas, Mex.";
+  List estadoList = ["Tamaulipas, Mex."];
+  // Future<String> _getEstadoList() async {
+  //   await rootBundle.loadString("json/addressdata.json").then((response) {
+  //     Map datos = json.decode(response);
+
+  //     setState(() {
+  //       estadoList = datos[_codigoPostal];
+  //     });
+  //   });
+  // }
+
 }
 
 class AddInput extends StatelessWidget {
@@ -266,6 +505,7 @@ class AddInput extends StatelessWidget {
     @required this.cCity,
     @required this.cState,
     @required this.cPinCode,
+    @required this.cCost,
   }) : super(key: key);
 
   final GlobalKey<FormState> formKey;
@@ -275,6 +515,7 @@ class AddInput extends StatelessWidget {
   final TextEditingController cCity;
   final TextEditingController cState;
   final TextEditingController cPinCode;
+  final TextEditingController cCost;
 
   @override
   Widget build(BuildContext context) {
@@ -301,51 +542,30 @@ class AddInput extends StatelessWidget {
                 MyTextField(
                   hint: "Nombre Completo",
                   controller: cName,
-                ),
-                Divider(
-                  height: 10.0,
-                  color: Colors.black,
+                  icon: Icons.accessibility,
                 ),
                 MyTextField(
                   hint: "Numero de Celular",
                   controller: cPhoneNumber,
-                ),
-                Divider(
-                  height: 10.0,
-                  color: Colors.black,
+                  icon: Icons.phone,
                 ),
                 MyTextField(
-                  hint: "Direcion, Col, Calle, Numero de Casa",
+                  hint: "Calle, Numero de Casa",
                   controller: cFlatHomeNumber,
+                  icon: Icons.home,
                 ),
-                Divider(
-                  height: 10.0,
-                  color: Colors.black,
-                ),
-                MyTextField(
-                  hint: "Ciudad",
-                  controller: cCity,
-                ),
-                Divider(
-                  height: 10.0,
-                  color: Colors.black,
-                ),
-                MyTextField(
-                  hint: "Estado, Pais",
-                  controller: cState,
-                ),
-                Divider(
-                  height: 10.0,
-                  color: Colors.black,
-                ),
-                MyTextField(
-                  hint: "Codigo Postal",
-                  controller: cPinCode,
-                ),
-                Divider(
-                  height: 10.0,
-                  color: Colors.black,
-                ),
+                // MyTextField(
+                //   hint: "Ciudad",
+                //   controller: cCity,
+                // ),
+                // MyTextField(
+                //   hint: "Estado, Pais",
+                //   controller: cState,
+                // ),
+                // MyTextField(
+                //   hint: "Codigo Postal",
+                //   controller: cPinCode,
+                // ),
               ],
             ),
           )
@@ -358,11 +578,13 @@ class AddInput extends StatelessWidget {
 class MyTextField extends StatelessWidget {
   final String hint;
   final TextEditingController controller;
+  final IconData icon;
 
   MyTextField({
     Key key,
     this.hint,
     this.controller,
+    this.icon,
   }) : super(key: key);
 
   @override
@@ -370,9 +592,15 @@ class MyTextField extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.all(8.0),
       child: TextFormField(
+        textCapitalization: TextCapitalization.sentences,
         controller: controller,
-        decoration: InputDecoration.collapsed(hintText: hint),
         validator: (val) => val.isEmpty ? "No Puede Dejar Campos Vacios" : null,
+        decoration: InputDecoration(
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0)),
+          hintText: hint,
+          labelText: hint,
+          suffixIcon: Icon(icon),
+        ),
       ),
     );
   }

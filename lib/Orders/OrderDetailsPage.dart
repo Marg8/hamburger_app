@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:app_hamburger/Address/address.dart';
+import 'package:app_hamburger/Address/addressModel.dart';
 import 'package:app_hamburger/Config/config.dart';
 import 'package:app_hamburger/Models/address.dart';
 import 'package:app_hamburger/Orders/myOrders.dart';
@@ -6,6 +9,7 @@ import 'package:app_hamburger/Store/storehome.dart';
 import 'package:app_hamburger/Widgets/loadingWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:app_hamburger/Widgets/orderCard.dart';
 import 'package:intl/intl.dart';
@@ -55,15 +59,7 @@ class OrderDetails extends StatelessWidget {
                           padding: EdgeInsets.all(4.0),
                           child: Align(
                             alignment: Alignment.centerLeft,
-                            child: Text(
-                              r"$ " +
-                                  dataMap[EcommerceApp.totalAmount].toString() +
-                                  " MXN",
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            child: headCost(dataMap),
                           ),
                         ),
                         Padding(
@@ -136,6 +132,69 @@ class OrderDetails extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Column headCost(Map<dynamic, dynamic> dataMap) {
+    double total = dataMap["cost"]+dataMap[EcommerceApp.totalAmount];
+    return Column(children: [
+      Row(
+        children: [
+          Text(
+            "Costo de Compra:",
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Spacer(),
+          Text(
+            r"$ " + dataMap[EcommerceApp.totalAmount]?.toString() + " MXN",
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+      Row(
+        children: [
+          Text(
+            "Costo de Envio:",
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Spacer(),
+          Text(
+            r"$ " + dataMap["cost"].toString() + " MXN",
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+      Row(
+        children: [
+          Text(
+            "Total:",
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Spacer(),
+          Text(
+            r"$ " + total.toString() + " MXN",
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    ]);
   }
 }
 
@@ -254,6 +313,12 @@ class ShippingDetails extends StatelessWidget {
               ]),
               TableRow(children: [
                 KeyText(
+                  msg: "Costo",
+                ),
+                Text("\$ ${model.cost.toString()} MXN"),
+              ]),
+              TableRow(children: [
+                KeyText(
                   msg: "Ciudad",
                 ),
                 Text(model.city),
@@ -312,7 +377,6 @@ class ShippingDetails extends StatelessWidget {
               onTap: () {
                 cancel.cancelOrderUser(context, getOrderId);
                 cancel.cancelOrderAdmin(context, getOrderId);
-                
               },
               child: Container(
                 decoration: new BoxDecoration(
@@ -368,9 +432,6 @@ class CancelOrder {
         .collection(EcommerceApp.collectionOrders)
         .doc(mOrderId)
         .delete();
-
-    
-
   }
 
   cancelOrderAdmin(BuildContext context, String mOrderId) {
