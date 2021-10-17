@@ -46,17 +46,17 @@ class _HeaderState extends State<Header> {
                         backgroundColor: Colors.orange,
                         radius: 35,
                         child: CircleAvatar(onBackgroundImageError: null ,
-                          backgroundImage: NetworkImage(
-                         EcommerceApp.sharedPreferences.getString(EcommerceApp.userAvatarUrl),
-                       ),
+                      //     backgroundImage: NetworkImage(
+                      //    EcommerceApp.sharedPreferences.getString(EcommerceApp.userAvatarUrl),
+                      //  ),
                           radius: 32,
                         ),
                         ),
                         SizedBox(width: 5),
                         Column(
                           children: [
-                            Text(EcommerceApp.sharedPreferences.getString(EcommerceApp.userName), 
-                            style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 18),),
+                            // Text(EcommerceApp.sharedPreferences.getString(EcommerceApp.userName), 
+                            // style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 18),),
                             Container(
                               margin: EdgeInsets.all(5),
                               padding: EdgeInsets.all(4),

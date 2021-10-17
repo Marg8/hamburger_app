@@ -41,5 +41,30 @@
     }
   </script>
   <script src="main.dart.js" type="application/javascript"></script>
+
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-app.js"></script>
+  
+  <!-- TODO: Add SDKs for Firebase products that you want to use
+       https://firebase.google.com/docs/web/setup#available-libraries -->
+  
+  
+  <script>
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    var firebaseConfig = {
+      apiKey: "AIzaSyCAZe_x-MB08PtUhW56zlQl9g1ErHwAUEU",
+      authDomain: "chiken-mac.firebaseapp.com",
+      projectId: "chiken-mac",
+      storageBucket: "chiken-mac.appspot.com",
+      messagingSenderId: "330054738628",
+      appId: "1:330054738628:web:2e5b5cf222f21fb63b5f91",
+      measurementId: "G-80E8S077BH"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+  </script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-analytics.js"></script>
 </body>
 </html>

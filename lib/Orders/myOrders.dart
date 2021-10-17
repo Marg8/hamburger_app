@@ -69,7 +69,7 @@ class _MyOrdersState extends State<MyOrders> {
                             .collection(EcommerceApp.userCartList2)
                             .where("productId",
                                 whereIn: snapshot.data.docs[index]
-                                    .data()[EcommerceApp.productID])
+                                    .get(EcommerceApp.productID))
                             .get(),
                         builder: (c, snap) {
                           return snap.hasData

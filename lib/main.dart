@@ -28,8 +28,6 @@ Future<void> main() async {
   EcommerceApp.auth = FirebaseAuth.instance;
   EcommerceApp.sharedPreferences = await SharedPreferences.getInstance();
   EcommerceApp.firestore = FirebaseFirestore.instance;
- 
-  
 
   return runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => ProductoModel()),
@@ -227,17 +225,18 @@ class AgregadosCompras extends StatelessWidget {
                 left: 4.0,
                 child: Consumer<CartItemCounter>(
                   builder: (context, counter, _) {
-                    return Text(
-                      (EcommerceApp.sharedPreferences
-                                  .getStringList(EcommerceApp.userCartList)
-                                  .length -
-                              1)
-                          .toString(),
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 12.0,
-                          fontWeight: FontWeight.w500),
-                    );
+                    return Text(0.toString());
+                    // Text(
+                    //   (EcommerceApp.sharedPreferences
+                    //               .getStringList(EcommerceApp.userCartList)
+                    //               .length -
+                    //           1)
+                    //       .toString(),
+                    //   style: TextStyle(
+                    //       color: Colors.black,
+                    //       fontSize: 12.0,
+                    //       fontWeight: FontWeight.w500),
+                    // );
                   },
                 ),
               ),
@@ -263,8 +262,8 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   displaySplash() {
-   Timer(Duration(seconds: 3), () async {
-      if ( EcommerceApp.auth.currentUser != null) {
+    Timer(Duration(seconds: 3), () async {
+      if (EcommerceApp.auth.currentUser != null) {
         Route route = MaterialPageRoute(builder: (_) => Hamburger());
         Navigator.pushReplacement(context, route);
       } else {

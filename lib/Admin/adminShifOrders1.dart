@@ -1,4 +1,3 @@
-
 import 'package:app_hamburger/Admin/adminOrderCard.dart';
 import 'package:app_hamburger/Admin/uploadItems.dart';
 import 'package:app_hamburger/Config/config.dart';
@@ -7,12 +6,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
 class AdminShiftOrders1 extends StatefulWidget {
   @override
   _AdminShiftOrders1State createState() => _AdminShiftOrders1State();
 }
-
 
 class _AdminShiftOrders1State extends State<AdminShiftOrders1> {
   @override
@@ -21,43 +18,43 @@ class _AdminShiftOrders1State extends State<AdminShiftOrders1> {
       child: new Scaffold(
         appBar: new AppBar(
           automaticallyImplyLeading: false,
-          iconTheme: IconThemeData(color:Colors.white),
+          iconTheme: IconThemeData(color: Colors.white),
           flexibleSpace: Container(
             decoration: new BoxDecoration(
               gradient: new LinearGradient(
-                colors: [Colors.teal,Colors.teal],
+                colors: [Colors.teal, Colors.teal],
                 begin: const FractionalOffset(0.0, 0.0),
-                end: const FractionalOffset(1.0,0.0),
-                stops: [0.0,1.0],
+                end: const FractionalOffset(1.0, 0.0),
+                stops: [0.0, 1.0],
                 tileMode: TileMode.clamp,
               ),
             ),
             child: Padding(
-        padding: const EdgeInsets.only(left: 15),
-        child: Row(        
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            GestureDetector(
-              onTap: ()
-              {
-                Route route = MaterialPageRoute(builder: (c) => UploadPage());
-                Navigator.pop(context, route);
-              },
-              child: Container(alignment: Alignment.centerRight,
-                child: Icon(
-                  Icons.arrow_back,
-                  color: Colors.white,
-                  size: 30,
+              padding: const EdgeInsets.only(left: 15),
+              child: Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+                GestureDetector(
+                  onTap: () {
+                    Route route =
+                        MaterialPageRoute(builder: (c) => UploadPage());
+                    Navigator.pop(context, route);
+                  },
+                  child: Container(
+                    alignment: Alignment.centerRight,
+                    child: Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                  ),
                 ),
-              ),
+              ]),
             ),
-          ]
-        ),
-        ),
-        ),
-          
+          ),
           centerTitle: true,
-          title: Text("My Orders Admin", style: TextStyle(color: Colors.white),),
+          title: Text(
+            "My Orders Admin",
+            style: TextStyle(color: Colors.white),
+          ),
           actions: [
             // IconButton(
             //   icon: Icon(Icons.arrow_drop_down_circle, color: Colors.white,),
@@ -67,7 +64,6 @@ class _AdminShiftOrders1State extends State<AdminShiftOrders1> {
             // Navigator.pushReplacement(context, route);
             //   },
             // ),
-            
           ],
         ),
         body: StreamBuilder<QuerySnapshot>(
@@ -85,24 +81,29 @@ class _AdminShiftOrders1State extends State<AdminShiftOrders1> {
                             .collection("users_carts_orders")
                             .where("productId",
                                 whereIn: snapshot.data.docs[index]
-                                    .data()[EcommerceApp.productID])
-                                    
+                                    .get(EcommerceApp.productID))
                             .get(),
                         builder: (c, snaps) {
                           return snaps.hasData
                               ? AdminOrderCard(
-                      itemCount: snaps.data.docs.length,
-                      data: snaps.data.docs,
-                      orderID: snapshot.data.docs[index].id,
-                      orderBy: snapshot.data.docs[index].data()["orderBy"],
-                      addressID: snapshot.data.docs[index].data()["addressID"],
-                    )
-                        :Center(child: circularProgress(),);
-                  },
-                );
-              },
-            )
-                : Center(child: circularProgress(),);
+                                  itemCount: snaps.data.docs.length,
+                                  data: snaps.data.docs,
+                                  orderID: snapshot.data.docs[index].id,
+                                  orderBy:
+                                      snapshot.data.docs[index].get("orderBy"),
+                                  addressID: snapshot.data.docs[index]
+                                      .get("addressID"),
+                                )
+                              : Center(
+                                  child: circularProgress(),
+                                );
+                        },
+                      );
+                    },
+                  )
+                : Center(
+                    child: circularProgress(),
+                  );
           },
         ),
       ),
